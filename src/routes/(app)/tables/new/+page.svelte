@@ -2,13 +2,8 @@
   import { enhance } from '$app/forms';
 
   const timezones = [
-    'America/New_York',
-    'America/Chicago',
-    'America/Denver',
-    'America/Los_Angeles',
-    'America/Phoenix',
-    'America/Anchorage',
-    'Pacific/Honolulu',
+    'America/New_York', 'America/Chicago', 'America/Denver',
+    'America/Los_Angeles', 'America/Phoenix', 'America/Anchorage', 'Pacific/Honolulu',
   ];
 
   let { data } = $props();
@@ -23,9 +18,7 @@
 
   <form method="POST" action="?/create" use:enhance class="space-y-5">
     {#if data?.error}
-      <div class="bg-red-900/50 border border-red-800 text-red-200 rounded px-4 py-3 text-sm">
-        {data.error}
-      </div>
+      <div class="bg-red-900/50 border border-red-800 text-red-200 rounded px-4 py-3 text-sm">{data.error}</div>
     {/if}
 
     <div>

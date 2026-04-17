@@ -6,7 +6,7 @@ const protectedPrefixes = ['/dashboard', '/tables', '/requests', '/party', '/not
 
 export const handle: Handle = async ({ event, resolve }) => {
   const session = await auth.api.getSession({ headers: event.request.headers });
-  event.locals.session = session as typeof event.locals.session;
+  event.locals.session = session;
 
   const path = event.url.pathname;
 
