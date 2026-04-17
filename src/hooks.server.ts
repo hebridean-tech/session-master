@@ -4,13 +4,20 @@ import { redirect } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit';
 
 const protectedPrefixes = ['/dashboard', '/tables', '/requests', '/party', '/notes', '/dm'];
+const authPrefix = '/api/auth';
 
 export const handle: Handle = async ({ event, resolve }) => {
-  // Get session BEFORE svelteKitHandler processes the response
+  // Get session
   const session = await auth.api.getSession({ headers: event.request.headers });
   event.locals.session = session as typeof event.locals.session;
 
-  const response = await svelteKitHandler({ event, resolve, auth, building: false });
+  // Only route auth API requests through Better Auth's SvelteKit handler
+  // This prevents CSRF blocking on normal SvelteKit form actions
+  if (event.url.pathname.startsWith(authPrefix)) {
+    return svelteKitHandler({ event, resolve, auth, building: false });
+  }
+
+  const response = await resolve(event);
 
   const path = event.url.pathname;
 

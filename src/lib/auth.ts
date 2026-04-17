@@ -12,4 +12,10 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
   },
+  advanced: {
+    cookiePrefix: 'sm',
+  },
+  trustedOrigins: [
+    process.env.BETTER_AUTH_URL || 'http://localhost:5173',
+  ],
 });
