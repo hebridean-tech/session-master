@@ -1,0 +1,41 @@
+{
+	"name": "session-master",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev",
+		"build": "vite build",
+		"preview": "vite preview",
+		"prepare": "svelte-kit sync || echo ''",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"db:push": "drizzle-kit push"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^7.0.1",
+		"@sveltejs/kit": "^2.57.0",
+		"@sveltejs/vite-plugin-svelte": "^7.0.0",
+		"@types/node": "^25.6.0",
+		"svelte": "^5.55.2",
+		"svelte-check": "^4.4.6",
+		"typescript": "^6.0.2",
+		"vite": "^8.0.7"
+	},
+	"dependencies": {
+		"@sveltejs/adapter-node": "^5.5.4",
+		"@tailwindcss/vite": "^4.2.2",
+		"better-auth": "^1.6.5",
+		"buffer": "^6.0.3",
+		"drizzle-kit": "^0.31.10",
+		"drizzle-orm": "^0.45.2",
+		"path-browserify": "^1.0.1",
+		"pdf-parse": "^2.4.5",
+		"postgres": "^3.4.9",
+		"stream-browserify": "^3.0.0",
+		"tailwindcss": "^4.2.2",
+		"zod": "^4.3.6"
+	}
+}

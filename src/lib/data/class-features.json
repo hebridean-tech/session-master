@@ -1,0 +1,1690 @@
+{
+  "barbarian": {
+    "hitDie": 12,
+    "spellcaster": false,
+    "casterType": null,
+    "features": {
+      "1": [
+        { "name": "Rage", "description": "As a bonus action, enter a rage for 1 minute. Gain advantage on Strength checks and saves, +2 melee damage with Strength weapons (bonus at higher levels), and resistance to bludgeoning/piercing/slashing damage." },
+        { "name": "Unarmored Defense", "description": "AC equals 10 + Dexterity modifier + Constitution modifier while not wearing armor." }
+      ],
+      "2": [
+        { "name": "Reckless Attack", "description": "On the first attack on your turn, you can attack recklessly. Gain advantage on melee attacks using Strength, but attacks against you have advantage until your next turn." },
+        { "name": "Danger Sense", "description": "Advantage on Dexterity saves against effects you can see, such as traps and spells. Cannot be used while blinded, deafened, or incapacitated." }
+      ],
+      "3": [
+        { "name": "Primal Path", "description": "Choose a Primal Path: Path of the Berserker, Path of the Totem Warrior, or another archetype. Grants path-specific features at this and later levels." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." },
+        { "name": "Fast Movement", "description": "Your speed increases by 10 feet while not wearing heavy armor." }
+      ],
+      "7": [
+        { "name": "Feral Instinct", "description": "Advantage on Initiative rolls. While raging, you cannot be surprised." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Brutal Critical", "description": "Score a critical hit on a roll of 19 or 20 with melee weapons. Roll one additional damage die on a critical hit." }
+      ],
+      "11": [
+        { "name": "Relentless Rage", "description": "If you drop to 0 HP while raging and don't die outright, make a DC 10 Constitution save. On success, drop to 1 HP instead. DC increases by 5 each time (max DC 30)." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "15": [
+        { "name": "Persistent Rage", "description": "Your rage is so fierce that it ends early only if you fall unconscious, choose to end it, or are incapacitated." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Brutal Critical (2 dice)", "description": "Roll two additional damage dice on a critical hit with melee weapons." }
+      ],
+      "18": [
+        { "name": "Indomitable Might", "description": "If your total for a Strength check is less than your Strength score, use the score in place of the total." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Primal Champion", "description": "Strength and Constitution scores increase by 4. Can exceed 20, up to 24." },
+        { "name": "Brutal Critical (3 dice)", "description": "Roll three additional damage dice on a critical hit with melee weapons." }
+      ],
+      "subclasses": {
+        "Path of the Berserker": {
+          "3": [
+            { "name": "Frenzy", "description": "While raging, you can make a single melee weapon attack as a bonus action. You suffer one level of exhaustion after the rage ends." }
+          ],
+          "6": [
+            { "name": "Mindless Rage", "description": "While raging, you cannot be charmed or frightened, and you have advantage on saves against being frightened or charmed." }
+          ],
+          "10": [
+            { "name": "Intimidating Presence", "description": "Use your action to frighten someone with your Intimidation check. They must make a Wisdom save or be frightened of you for 1 minute." }
+          ],
+          "14": [
+            { "name": "Retaliation", "description": "When a creature damages you while you are raging, use your reaction to make a melee weapon attack against it." }
+          ]
+        },
+        "Path of the Totem Warrior": {
+          "3": [
+            { "name": "Totem Spirit", "description": "Choose a totem animal (Bear, Wolf, Eagle, etc.). Gain a feature while raging based on the chosen animal." }
+          ],
+          "6": [
+            { "name": "Aspect of the Beast", "description": "Gain additional benefits based on your totem animal even while not raging." }
+          ],
+          "10": [
+            { "name": "Spirit Walker", "description": "Cast commune with nature as a ritual. Gain the ability to see the spirit world while doing so." }
+          ],
+          "14": [
+            { "name": "Totemic Attunement", "description": "Gain a powerful spiritual benefit based on your totem animal while raging." }
+          ]
+        },
+        "Path of the Zealot": {
+          "3": [
+            { "name": "Divine Fury", "description": "While raging, the first creature you hit on your turn takes extra necrotic damage equal to 2 + half your barbarian level." },
+            { "name": "Warrior of the Gods", "description": "If you die, any spell that revives you only takes 1 action and any material cost is halved." }
+          ],
+          "6": [
+            { "name": "Zealous Focus", "description": "While raging, you have advantage on one attack roll or saving throw. Recharge when you rage." }
+          ],
+          "10": [
+            { "name": "Fanatical Focus", "description": "If you fail a saving throw while raging, you can reroll it and must use the new roll. Recharges on rage." }
+          ],
+          "14": [
+            { "name": "Zealot's Blessing", "description": "When you use action surge, regain HP equal to your barbarian level + Constitution modifier." }
+          ]
+        }
+      }
+    }
+  },
+  "bard": {
+    "hitDie": 8,
+    "spellcaster": true,
+    "casterType": "full",
+    "features": {
+      "1": [
+        { "name": "Spellcasting", "description": "You know 4 cantrips and 2 1st-level spells from the bard spell list. Learn additional spells as you level. Use Charisma as your spellcasting ability." },
+        { "name": "Bardic Inspiration", "description": "As a bonus action, give a Bardic Inspiration die (d6) to one creature within 60 feet. They can add it to one ability check, attack roll, or saving throw within 10 minutes." }
+      ],
+      "2": [
+        { "name": "Jack of All Trades", "description": "Add half your proficiency bonus (rounded down) to any ability check that doesn't already include your proficiency bonus." },
+        { "name": "Song of Rest", "description": "During a short rest, you or friendly creatures who hear your performance regain extra HP equal to 1d6 + your bard level." }
+      ],
+      "3": [
+        { "name": "Bard College", "description": "Choose a Bard College: College of Lore, College of Valor, or another archetype. Grants college-specific features." },
+        { "name": "Expertise", "description": "Choose two of your skill proficiencies. Your proficiency bonus is doubled for any ability check using those skills." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Bardic Inspiration (d8)", "description": "Your Bardic Inspiration die becomes a d8." },
+        { "name": "Font of Inspiration", "description": "Regain all expended Bardic Inspiration uses on a short or long rest." }
+      ],
+      "6": [
+        { "name": "Countercharm", "description": "As an action, start a performance that lasts until the end of your next turn. You and friendly creatures within 30 feet have advantage on saves against being frightened or charmed." },
+        { "name": "Bard College Feature", "description": "Gain your Bard College's 6th-level feature." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Song of Rest (d8)", "description": "Song of Rest healing increases to 1d8 + bard level." }
+      ],
+      "10": [
+        { "name": "Bardic Inspiration (d10)", "description": "Your Bardic Inspiration die becomes a d10." },
+        { "name": "Expertise", "description": "Choose two more skill proficiencies to gain expertise in." },
+        { "name": "Magical Secrets", "description": "Learn two spells from any class spell list. These count as bard spells for you." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "Song of Rest (d10)", "description": "Song of Rest healing increases to 1d10 + bard level." }
+      ],
+      "14": [
+        { "name": "Magical Secrets", "description": "Learn two more spells from any class spell list." },
+        { "name": "Bard College Feature", "description": "Gain your Bard College's 14th-level feature." }
+      ],
+      "15": [
+        { "name": "Bardic Inspiration (d12)", "description": "Your Bardic Inspiration die becomes a d12." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "18": [
+        { "name": "Song of Rest (d12)", "description": "Song of Rest healing increases to 1d12 + bard level." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Magical Secrets", "description": "Learn two more spells from any class spell list." }
+      ],
+      "20": [
+        { "name": "Superior Inspiration", "description": "When you roll initiative and have no Bardic Inspiration uses remaining, regain one use." }
+      ],
+      "subclasses": {
+        "College of Lore": {
+          "3": [
+            { "name": "Bonus Proficiencies", "description": "Gain proficiency with three skills of your choice." },
+            { "name": "Cutting Words", "description": "When a creature you can see makes an attack roll, ability check, or damage roll, use your reaction to expend Bardic Inspiration to reduce the roll." }
+          ],
+          "6": [
+            { "name": "Additional Magical Secrets", "description": "Learn two spells from any class spell list." }
+          ],
+          "14": [
+            { "name": "Peerless Skill", "description": "When you make an ability check, you can expend Bardic Inspiration to add the die to the roll. You can do this after seeing the roll." }
+          ]
+        },
+        "College of Valor": {
+          "3": [
+            { "name": "Bonus Proficiencies", "description": "Gain proficiency with medium armor, shields, and martial weapons." },
+            { "name": "Combat Inspiration", "description": "A creature that receives Bardic Inspiration can add the die to its damage roll or its AC against a melee attack." }
+          ],
+          "6": [
+            { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." }
+          ],
+          "14": [
+            { "name": "Battle Magic", "description": "When you cast a bard spell with a casting time of 1 action, you can make one weapon attack as a bonus action." }
+          ]
+        },
+        "College of Swords": {
+          "3": [
+            { "name": "Bonus Proficiencies", "description": "Gain proficiency with medium armor, scimitar, and the Performance ability to use as a spellcasting focus." },
+            { "name": "Fighting Style", "description": "Choose a fighting style from: Dueling or Two-Weapon Fighting.", "type": "fighting_style", "options": ["Dueling", "Two-Weapon Fighting"] }
+          ],
+          "6": [
+            { "name": "Blade Flourish", "description": "Learn flourishes that let you spend Bardic Inspiration: Slashing Flourish (extra damage + move), Defensive Flourish (AC bonus), Mobile Flourish (push + follow)." }
+          ],
+          "14": [
+            { "name": "Master's Flourish", "description": "When you use Blade Flourish, you can use the optional effect without expending Bardic Inspiration." }
+          ]
+        }
+      }
+    }
+  },
+  "cleric": {
+    "hitDie": 8,
+    "spellcaster": true,
+    "casterType": "full",
+    "features": {
+      "1": [
+        { "name": "Spellcasting", "description": "You know 3 cantrips and prepare spells from the cleric spell list using Wisdom." },
+        { "name": "Divine Domain", "description": "Choose a Divine Domain: Life, Light, Tempest, Trickery, War, Knowledge, Nature, or another domain. Grants domain spells and features." }
+      ],
+      "2": [
+        { "name": "Channel Divinity (1/rest)", "description": "You gain the ability to channel divine energy from your deity. Gain two Channel Divinity options: Turn Undead and your domain's feature." },
+        { "name": "Turn Undead", "description": "Each undead within 30 feet must make a Wisdom save. On failure, it is turned for 1 minute (flees from you)." }
+      ],
+      "3": [
+        { "name": "2nd-Level Spells", "description": "You can now prepare 2nd-level spells." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Destroy Undead", "description": "Turned undead with CR 1/2 or lower are destroyed instead of turned." },
+        { "name": "3rd-Level Spells", "description": "You can now prepare 3rd-level spells." }
+      ],
+      "6": [
+        { "name": "Channel Divinity (2/rest)", "description": "You can use Channel Divinity twice between rests." },
+        { "name": "Divine Domain Feature", "description": "Gain your domain's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "4th-Level Spells", "description": "You can now prepare 4th-level spells." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Destroy Undead (CR 1)", "description": "Turned undead with CR 1 or lower are destroyed." },
+        { "name": "Divine Domain Feature", "description": "Gain your domain's 8th-level feature." }
+      ],
+      "9": [
+        { "name": "5th-Level Spells", "description": "You can now prepare 5th-level spells." }
+      ],
+      "10": [
+        { "name": "Divine Intervention", "description": "Call on your deity for aid. Roll percentile dice. If you roll equal to or below your cleric level, your deity intervenes. Usable once per 7 days." }
+      ],
+      "11": [
+        { "name": "Destroy Undead (CR 2)", "description": "Turned undead with CR 2 or lower are destroyed." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "14": [
+        { "name": "Destroy Undead (CR 3)", "description": "Turned undead with CR 3 or lower are destroyed." }
+      ],
+      "15": [
+        { "name": "6th-Level Spells", "description": "You can now prepare 6th-level spells." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Destroy Undead (CR 4)", "description": "Turned undead with CR 4 or lower are destroyed." },
+        { "name": "7th-Level Spells", "description": "You can now prepare 7th-level spells." }
+      ],
+      "18": [
+        { "name": "Channel Divinity (3/rest)", "description": "You can use Channel Divinity three times between rests." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Divine Intervention Improvement", "description": "Divine Intervention automatically works if your cleric level is 20 or higher (no roll needed)." }
+      ],
+      "subclasses": {
+        "Life Domain": {
+          "1": [
+            { "name": "Disciple of Life", "description": "When you cast a spell of 1st level or higher that restores HP, the target regains additional HP equal to 2 + the spell's level." },
+            { "name": "Life Domain Spells", "description": "You always have bless, cure wounds, lesser restoration, spirit guardians, beacon of hope, revivify, mass cure wounds, raise dead prepared." }
+          ],
+          "2": [
+            { "name": "Preserve Life", "description": "Use Channel Divinity to restore HP to creatures within 30 feet. Each creature regains HP equal to 5 + twice your cleric level, divided as you choose. No effect on undead or constructs." }
+          ],
+          "6": [
+            { "name": "Blessed Healer", "description": "When you heal a creature with a spell of 1st level or higher, you regain HP equal to 2 + the spell's level." }
+          ],
+          "8": [
+            { "name": "Divine Strike", "description": "Once per turn, weapon attacks deal extra 1d8 radiant damage." }
+          ],
+          "17": [
+            { "name": "Supreme Healing", "description": "When you roll dice to restore HP with a spell, use the maximum number possible for each die." }
+          ]
+        },
+        "Light Domain": {
+          "1": [
+            { "name": "Light Cantrip", "description": "You learn the light cantrip." },
+            { "name": "Warding Flare", "description": "When a creature attacks you, you can use your reaction to impose disadvantage. UsableWisMod/day." }
+          ],
+          "2": [
+            { "name": "Radiance of the Dawn", "description": "Channel Divinity: 30-foot sphere of light. Each enemy makes a Con save or takes 2d10 + cleric level radiant damage; success halves it." }
+          ],
+          "6": [
+            { "name": "Improved Flare", "description": "Warding Flare also blinds the attacker until the end of your next turn." }
+          ],
+          "8": [
+            { "name": "Divine Strike", "description": "Weapon attacks deal extra 1d8 radiant damage once per turn." }
+          ],
+          "17": [
+            { "name": "Corona of Light", "description": "Constant aura of bright light in 60 feet. Enemies that start their turn in the light take 10 radiant damage." }
+          ]
+        },
+        "Tempest Domain": {
+          "1": [
+            { "name": "Wrath of the Storm", "description": "When hit by a melee attack, use reaction to deal 2d8 lightning/thunder damage to the attacker. WisMod/day." }
+          ],
+          "2": [
+            { "name": "Destructive Wrath", "description": "Channel Divinity to maximize lightning/thunder damage from your spells." }
+          ],
+          "6": [
+            { "name": "Thunderous Strike", "description": "When you deal lightning/thunder damage, you can push the target 10 feet." }
+          ],
+          "8": [
+            { "name": "Divine Strike", "description": "Weapon attacks deal extra 1d8 thunder damage once per turn." }
+          ],
+          "17": [
+            { "name": "Stormborn", "description": "You have resistance to lightning and thunder damage. You gain a flying speed of 60 feet that you can use only to fly in difficult conditions." }
+          ]
+        },
+        "War Domain": {
+          "1": [
+            { "name": "War Priest", "description": "Gain proficiency with martial weapons and heavy armor." },
+            { "name": "War God's Blessing", "description": "Once on each of your turns when you hit with a weapon attack, you can add your proficiency bonus to the damage. WisMod/long rest." }
+          ],
+          "2": [
+            { "name": "Guided Strike", "description": "Channel Divinity: When a creature within 30 feet makes an attack roll, you can add 10 to the roll." }
+          ],
+          "6": [
+            { "name": "War Domain Feature", "description": "Once per turn when you hit with a weapon, you deal +1d8 weapon damage." }
+          ],
+          "8": [
+            { "name": "Divine Strike", "description": "Weapon attacks deal extra 1d8 weapon damage once per turn." }
+          ],
+          "17": [
+            { "name": "Avatar of Battle", "description": "While wearing heavy armor, you have resistance to bludgeoning, piercing, and slashing damage from nonmagical weapons." }
+          ]
+        }
+      }
+    }
+  },
+  "druid": {
+    "hitDie": 8,
+    "spellcaster": true,
+    "casterType": "full",
+    "features": {
+      "1": [
+        { "name": "Druidic", "description": "You know Druidic, a secret language known only to druids." },
+        { "name": "Spellcasting", "description": "You know 2 cantrips and prepare spells from the druid spell list using Wisdom." }
+      ],
+      "2": [
+        { "name": "Wild Shape", "description": "Use an action to transform into a beast with CR 1/4 or lower. Can use twice per short rest. Each form lasts up to 1 hour ( Concentration). Can only transform into beasts you've seen." }
+      ],
+      "3": [
+        { "name": "Druid Circle", "description": "Choose a Druid Circle: Circle of the Moon, Circle of the Land, or another archetype." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Wild Shape Improvement", "description": "Can transform into beasts with CR 1/2 or lower." }
+      ],
+      "5": [
+        { "name": "3rd-Level Spells", "description": "You can now prepare 3rd-level spells." }
+      ],
+      "6": [
+        { "name": "Druid Circle Feature", "description": "Gain your circle's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "4th-Level Spells", "description": "You can now prepare 4th-level spells." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Wild Shape Improvement", "description": "Can transform into beasts with CR 1 or lower." }
+      ],
+      "9": [
+        { "name": "5th-Level Spells", "description": "You can now prepare 5th-level spells." }
+      ],
+      "10": [
+        { "name": "Cantrip Form", "description": "You can cast cantrips while in Wild Shape." },
+        { "name": "Druid Circle Feature", "description": "Gain your circle's 10th-level feature." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "14": [
+        { "name": "Druid Circle Feature", "description": "Gain your circle's 14th-level feature." }
+      ],
+      "15": [
+        { "name": "6th-Level Spells", "description": "You can now prepare 6th-level spells." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "18": [
+        { "name": "Timeless Body", "description": "You age at a very slow rate. For every 10 years that pass, your body ages only 1 year." },
+        { "name": "Beast Spells", "description": "You can cast spells in Wild Shape, using gestures and vocalizations. The spells must have a casting time of 1 action." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Archdruid", "description": "You can use Wild Shape an unlimited number of times. Ignore time and elemental restrictions on shapes." }
+      ],
+      "subclasses": {
+        "Circle of the Moon": {
+          "2": [
+            { "name": "Combat Wild Shape", "description": "While in Wild Shape, you can use a bonus action on your turn to take the Dash action." },
+            { "name": "Circle Forms", "description": "You can use Wild Shape to transform into beasts with CR 1 (half your druid level, rounded down)." }
+          ],
+          "6": [
+            { "name": "Primal Strike", "description": "Your attacks in beast form count as magical for overcoming resistance and immunity to nonmagical attacks." }
+          ],
+          "10": [
+            { "name": "Elemental Wild Shape", "description": "You can expend two Wild Shape uses to transform into an elemental (air, earth, fire, or water) for up to 1 hour." }
+          ],
+          "14": [
+            { "name": "Thousand Forms", "description": "You can cast alter self at will." }
+          ]
+        },
+        "Circle of the Land": {
+          "2": [
+            { "name": "Bonus Cantrip", "description": "Learn one additional druid cantrip." },
+            { "name": "Natural Recovery", "description": "During a short rest, recover expended spell slots with a combined level equal to half your druid level (rounded up)." }
+          ],
+          "3": [
+            { "name": "Circle Spells", "description": "Choose a biome (Forest, Desert, Mountain, etc.). Gain additional spells that are always prepared." }
+          ],
+          "6": [
+            { "name": "Land's Stride", "description": "Moving through nonmagical difficult terrain costs no extra movement. You gain advantage on saves against plants that are magically created or manipulated." }
+          ],
+          "10": [
+            { "name": "Nature's Ward", "description": "You cannot be charmed or frightened by elementals or fey, and you are immune to poison and disease." }
+          ],
+          "14": [
+            { "name": "Nature's Sanctuary", "description": "Creatures have disadvantage on attacks against you when you are in natural terrain (forests, mountains, etc.)." }
+          ]
+        },
+        "Circle of Spores": {
+          "2": [
+            { "name": "Halo of Spores", "description": "A 10-foot aura of toxic spores surrounds you. At the start of your turn, each creature in the aura takes 1d4 necrotic damage." },
+            { "name": "Symbiotic Entity", "description": "While in Wild Shape, the necrotic damage of Halo of Spores increases to 1d6, and you gain temporary HP equal to your druid level." }
+          ],
+          "6": [
+            { "name": "Fungal Infestation", "description": "When a creature dies within 10 feet of you, it rises as a zombie under your control at the end of your next turn." }
+          ],
+          "10": [
+            { "name": "Spreading Spores", "description": "Halo of Spores expands to 30 feet." }
+          ],
+          "14": [
+            { "name": "Fungal Body", "description": "You gain resistance to bludgeoning, piercing, and slashing damage." }
+          ]
+        }
+      }
+    }
+  },
+  "fighter": {
+    "hitDie": 10,
+    "spellcaster": false,
+    "casterType": null,
+    "features": {
+      "1": [
+        { "name": "Fighting Style", "description": "Choose a fighting style.", "type": "fighting_style", "options": ["Archery", "Defense", "Dueling", "Great Weapon Fighting", "Protection", "Two-Weapon Fighting", "Blind Fighting", "Interception", "Superior Technique", "Thrown Weapon Fighting"] },
+        { "name": "Second Wind", "description": "As a bonus action, regain HP equal to 1d10 + your fighter level. Usable once per short rest." }
+      ],
+      "2": [
+        { "name": "Action Surge", "description": "On your turn, take one additional action. Usable once per short rest." }
+      ],
+      "3": [
+        { "name": "Martial Archetype", "description": "Choose a Martial Archetype: Champion, Battle Master, Eldritch Knight, or another archetype." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." }
+      ],
+      "6": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "7": [
+        { "name": "Martial Archetype Feature", "description": "Gain your archetype's 7th-level feature." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Indomitable", "description": "You can reroll a saving throw. Must use the new roll. Usable once per long rest." }
+      ],
+      "10": [
+        { "name": "Martial Archetype Feature", "description": "Gain your archetype's 10th-level feature." }
+      ],
+      "11": [
+        { "name": "Extra Attack (2)", "description": "You can attack three times when you take the Attack action." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "Indomitable (2/long rest)", "description": "You can use Indomitable twice per long rest." }
+      ],
+      "14": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "15": [
+        { "name": "Martial Archetype Feature", "description": "Gain your archetype's 15th-level feature." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Action Surge (2/short rest)", "description": "You can use Action Surge twice per short rest." },
+        { "name": "Indomitable (3/long rest)", "description": "You can use Indomitable three times per long rest." }
+      ],
+      "18": [
+        { "name": "Martial Archetype Feature", "description": "Gain your archetype's 18th-level feature." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Extra Attack (3)", "description": "You can attack four times when you take the Attack action." }
+      ],
+      "subclasses": {
+        "Champion": {
+          "3": [
+            { "name": "Improved Critical", "description": "Critical hit range on attack rolls expands to 19-20." }
+          ],
+          "7": [
+            { "name": "Remarkable Athlete", "description": "Add half your proficiency bonus (rounded up) to Strength, Dexterity, and Constitution checks, and initiative." }
+          ],
+          "10": [
+            { "name": "Additional Fighting Style", "description": "Choose another fighting style from the fighter list.", "type": "fighting_style", "options": ["Archery", "Defense", "Dueling", "Great Weapon Fighting", "Protection", "Two-Weapon Fighting", "Blind Fighting", "Interception", "Superior Technique", "Thrown Weapon Fighting"] }
+          ],
+          "15": [
+            { "name": "Superior Critical", "description": "Critical hit range expands to 18-20." }
+          ],
+          "18": [
+            { "name": "Survivor", "description": "Regain HP equal to 5 + your Constitution modifier at the start of each of your turns if you have at least 1 HP." }
+          ]
+        },
+        "Battle Master": {
+          "3": [
+            { "name": "Combat Superiority", "description": "Learn 3 maneuvers from a list. You have 4 superiority dice (d8). Use a bonus action to exert a maneuver to gain its effect." },
+            { "name": "Student of War", "description": "Gain proficiency with one type of artisan's tools." }
+          ],
+          "7": [
+            { "name": "Know Your Enemy", "description": "Study a creature for 1 minute to learn its class, AC, HP range, and highest ability score." }
+          ],
+          "10": [
+            { "name": "Improved Combat Superiority", "description": "Superiority dice increase to d10s. Learn 2 more maneuvers." }
+          ],
+          "15": [
+            { "name": "Relentless", "description": "When you roll initiative and have no superiority dice, regain one die." }
+          ]
+        },
+        "Eldritch Knight": {
+          "3": [
+            { "name": "Spellcasting", "description": "You know 3 cantrips and prepare wizard spells. Use Intelligence as your spellcasting ability. This makes you a 1/3 caster." },
+            { "name": "Weapon Bond", "description": "Bond a weapon to yourself. It cannot be disarmed. You can summon it to your hand as a bonus action." }
+          ],
+          "4": [
+            { "name": "War Magic", "description": "When you cast a spell as a bonus action, you can make one weapon attack as part of the same action." }
+          ],
+          "7": [
+            { "name": "War Magic", "description": "When you use your action to cast a spell, you can make one weapon attack as a bonus action." }
+          ],
+          "10": [
+            { "name": "Eldritch Strike", "description": "Once per turn when you hit with a weapon attack, you can channel magical energy to deal additional force damage." }
+          ],
+          "15": [
+            { "name": "Arcane Charge", "description": "When you use Action Surge, you can teleport up to 30 feet to an unoccupied space you can see." }
+          ],
+          "18": [
+            { "name": "Improved War Magic", "description": "When you cast a wizard spell as an action, you can make two weapon attacks as a bonus action." }
+          ]
+        }
+      }
+    }
+  },
+  "monk": {
+    "hitDie": 8,
+    "spellcaster": false,
+    "casterType": null,
+    "features": {
+      "1": [
+        { "name": "Unarmored Defense", "description": "AC equals 10 + Dexterity modifier + Wisdom modifier while not wearing armor and using no shield." },
+        { "name": "Martial Arts", "description": "Use Dexterity instead of Strength for unarmed strikes. Roll a d4 for damage (increases at higher levels). When you take the Attack action with an unarmed strike, you can make one bonus action unarmed strike." }
+      ],
+      "2": [
+        { "name": "Ki", "description": "Gain a pool of Ki points equal to your monk level. Spent points replenish on a short or long rest. Ki options: Flurry of Blows (1 ki), Patient Defense (1 ki, Dodge), Step of the Wind (1 ki, Dash or Disengage)." }
+      ],
+      "3": [
+        { "name": "Monastic Tradition", "description": "Choose a Monastic Tradition: Way of the Open Hand, Way of Shadow, Way of the Four Elements, or another tradition." },
+        { "name": "Deflect Missiles", "description": "When hit by a ranged weapon attack, reduce damage by 1d10 + Dex mod + monk level. If reduced to 0, spend 1 ki to throw it back." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Slow Fall", "description": "Reduce falling damage by 5 × monk level when you are adjacent to a wall." }
+      ],
+      "5": [
+        { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." },
+        { "name": "Stunning Strike", "description": "When you hit with a melee weapon attack, spend 1 ki to attempt to stun the target (Con save or stunned until end of your next turn)." }
+      ],
+      "6": [
+        { "name": "Ki-Empowered Strikes", "description": "Your unarmed strikes count as magical for overcoming resistance and immunity." },
+        { "name": "Monastic Tradition Feature", "description": "Gain your tradition's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "Evasion", "description": "When subjected to an effect that allows a Dexterity save for half damage, take no damage on success and half on failure." },
+        { "name": "Stillness of Mind", "description": "Use an action and 1 ki to end one effect causing you to be charmed or frightened." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Unarmored Movement Improvement", "description": "Movement speed increases by 15 feet while unarmored." }
+      ],
+      "10": [
+        { "name": "Purity of Body", "description": "Immunity to poison and disease." }
+      ],
+      "11": [
+        { "name": "Monastic Tradition Feature", "description": "Gain your tradition's 11th-level feature." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "Tongue of the Sun and Moon", "description": "You can speak, read, and write any language." }
+      ],
+      "14": [
+        { "name": "Diamond Soul", "description": "Gain proficiency in all saving throws. Spend 1 ki to reroll a failed save." }
+      ],
+      "15": [
+        { "name": "Timeless Body", "description": "For every 10 years that pass, your body ages only 1 year." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Monastic Tradition Feature", "description": "Gain your tradition's 17th-level feature." }
+      ],
+      "18": [
+        { "name": "Empty Body", "description": "Spend 4 ki to become invisible for 1 minute. Also gain resistance to all damage for that duration." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Perfect Self", "description": "When you roll for initiative and have no ki points, regain 4 ki points. Your mastery of ki grants you a state of near-transcendence." }
+      ],
+      "subclasses": {
+        "Way of the Open Hand": {
+          "3": [
+            { "name": "Open Hand Technique", "description": "Flurry of Blows can push 15 feet, knock prone, or prevent reactions on each bonus action unarmed strike." }
+          ],
+          "6": [
+            { "name": "Wholeness of Body", "description": "Spend 1 ki to heal yourself for an amount equal to 3 × monk level." }
+          ],
+          "11": [
+            { "name": "Tranquility", "description": "Beginning of your turn and as bonus action: spend 1 ki for 10-foot aura. Creatures in aura can't attack you unless they make a Wisdom save." }
+          ],
+          "17": [
+            { "name": "Quivering Palm", "description": "Hit a creature and spend 3 ki to set up a quivering palm. Within 3 days, use an action to end the effect: make a monk level DC Con save or take 10d10 necrotic damage. On success, no damage." }
+          ]
+        },
+        "Way of Shadow": {
+          "3": [
+            { "name": "Shadow Arts", "description": "Spend 2 ki to cast darkness, darkvision, pass without trace, or silence (no material components). Has a shadowy flavor." }
+          ],
+          "6": [
+            { "name": "Shadow Step", "description": "When in dim light or darkness, spend 1 ki as bonus action to teleport up to 60 feet to an unoccupied space in dim light/darkness. Advantage on next melee attack." }
+          ],
+          "11": [
+            { "name": "Cloak of Shadows", "description": "Spend 2 ki when you are in dim light or darkness to become invisible until end of your next turn." }
+          ],
+          "17": [
+            { "name": "Shadow Master", "description": "When in dim light or darkness, spend 4 ki to create a 30-foot-radius sphere of darkness that moves with you for 10 minutes." }
+          ]
+        },
+        "Way of the Four Elements": {
+          "3": [
+            { "name": "Disciple of the Elements", "description": "Learn elemental disciplines that cost ki points to use. Each grants a spell-like effect." }
+          ],
+          "5": [
+            { "name": "Elemental Attunement", "description": "Learn additional elemental disciplines." }
+          ],
+          "9": [
+            { "name": "Elemental Attunement", "description": "Learn additional elemental disciplines." }
+          ],
+          "13": [
+            { "name": "Elemental Attunement", "description": "Learn additional elemental disciplines." }
+          ],
+          "17": [
+            { "name": "Elemental Attunement", "description": "Learn additional elemental disciplines." }
+          ]
+        }
+      }
+    }
+  },
+  "paladin": {
+    "hitDie": 10,
+    "spellcaster": true,
+    "casterType": "half",
+    "features": {
+      "1": [
+        { "name": "Divine Sense", "description": "Use an action to detect celestials, fiends, and undead within 60 feet. Know type and location. Usable 1 + Cha mod/long rest." },
+        { "name": "Lay on Hands", "description": "You have a pool of healing power equal to 5 × paladin level. As an action, touch a creature to restore any number of HP from the pool." }
+      ],
+      "2": [
+        { "name": "Fighting Style", "description": "Choose a fighting style.", "type": "fighting_style", "options": ["Defense", "Dueling", "Great Weapon Fighting", "Protection"] },
+        { "name": "Divine Smite", "description": "When you hit with a melee weapon, spend a spell slot to deal extra 2d8 radiant damage (+1d8 vs undead/fiends per slot level above 1st)." },
+        { "name": "Spellcasting", "description": "You prepare paladin spells using Charisma. Spell slots recharge on a long rest." }
+      ],
+      "3": [
+        { "name": "Divine Health", "description": "Immunity to disease." },
+        { "name": "Sacred Oath", "description": "Choose a Sacred Oath: Oath of Devotion, Oath of the Ancients, Oath of Vengeance, or another oath." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." },
+        { "name": "Destroy Undead", "description": "Each undead within 30 feet that has CR at most 1/2 has disadvantage on attacks against you." }
+      ],
+      "6": [
+        { "name": "Aura of Protection", "description": "You and friendly creatures within 10 feet gain a bonus to all saving throws equal to your Charisma modifier." },
+        { "name": "Sacred Oath Feature", "description": "Gain your oath's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "3rd-Level Spells", "description": "You can now prepare 3rd-level spells." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "10": [
+        { "name": "Aura of Courage", "description": "You and friendly creatures within 10 feet cannot be frightened." },
+        { "name": "Sacred Oath Feature", "description": "Gain your oath's 10th-level feature." }
+      ],
+      "11": [
+        { "name": "Improved Divine Smite", "description": "Once per turn, weapon attacks deal additional 1d8 radiant damage." },
+        { "name": "Destroy Undead (CR 1)", "description": "Undead with CR 1 or lower have disadvantage on attacks against you." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "14": [
+        { "name": "Cleansing Touch", "description": "Use an action to end one spell or effect afflicting a creature you touch. Cha mod/long rest." },
+        { "name": "Sacred Oath Feature", "description": "Gain your oath's 14th-level feature." }
+      ],
+      "15": [
+        { "name": "4th-Level Spells", "description": "You can now prepare 4th-level spells." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "18": [
+        { "name": "Aura Improvements", "description": "Aura of Protection and Aura of Courage extend to 30 feet." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Holy Nimbus", "description": "As an action, emit a 30-foot aura of sunlight for 1 minute. Enemies take 10 radiant damage when they start their turn in the aura. Usable once per long rest." }
+      ],
+      "subclasses": {
+        "Oath of Devotion": {
+          "3": [
+            { "name": "Oath Spells", "description": "You always have protection from evil and good, sanctuary, lesser restoration, beacon of hope, dispel magic, holy aura prepared." },
+            { "name": "Channel Divinity: Turn the Unholy", "description": "Each fiend or undead within 30 feet makes a Wisdom save. On failure, turned for 1 minute." }
+          ],
+          "7": [
+            { "name": "Aura of Devotion", "description": "You and friendly creatures within 10 feet cannot be charmed." }
+          ],
+          "15": [
+            { "name": "Purity of Spirit", "description": "You are always under the effect of protection from evil and good." }
+          ],
+          "20": [
+            { "name": "Holy Nimbus", "description": "Emit an aura of sunlight. Fiends and undead take 10 radiant damage starting their turn in it." }
+          ]
+        },
+        "Oath of the Ancients": {
+          "3": [
+            { "name": "Oath Spells", "description": "You always have ensnaring strike, speak with animals, moonbeam, misty step, plant growth, dispel magic, tree stride, commune with nature prepared." },
+            { "name": "Channel Divinity: Turn the Faithless", "description": "Each fey or fiend within 30 feet makes a Wisdom save. On failure, turned for 1 minute." }
+          ],
+          "7": [
+            { "name": "Aura of Warding", "description": "You and friendly creatures within 10 feet have resistance to spells from other creatures." }
+          ],
+          "15": [
+            { "name": "Undying Sentinel", "description": "When you are reduced to 0 HP but not killed, you drop to 1 HP instead. Once per long rest." }
+          ],
+          "20": [
+            { "name": "Elder Champion", "description": "Assume a spectral guardian form for 1 minute: resist damage from spells, and attackers within 10 feet take radiant damage equal to your Cha mod." }
+          ]
+        },
+        "Oath of Vengeance": {
+          "3": [
+            { "name": "Oath Spells", "description": "You always have hunter's mark, compel duel, haste, locate creature, dimension door, banishment, hold monster, scourge prepared." },
+            { "name": "Channel Divinity: Abjure Enemy", "description": "One creature you can see makes a Wisdom save or be frightened for 1 minute and takes 4d10 psychic damage if it ends its turn within 30 feet." },
+            { "name": "Channel Divinity: Vow of Enmity", "description": "As a bonus action, designate one creature. You have advantage on attack rolls against it for 1 minute." }
+          ],
+          "7": [
+            { "name": "Relentless Avenger", "description": "When you hit a foe with opportunity attack, you can move up to half your speed immediately after." }
+          ],
+          "15": [
+            { "name": "Soul of Vengeance", "description": "When a creature under your Vow of Enmity makes an attack, use your reaction to make a melee weapon attack against them." }
+          ],
+          "20": [
+            { "name": "Avenging Angel", "description": "For 1 hour: grow spectral wings (fly speed 60 ft), and when a hostile creature starts its turn within 30 feet, it takes 1d6 radiant damage." }
+          ]
+        }
+      }
+    }
+  },
+  "ranger": {
+    "hitDie": 10,
+    "spellcaster": true,
+    "casterType": "half",
+    "features": {
+      "1": [
+        { "name": "Favored Enemy", "description": "Choose a type of favored enemy. You have advantage on Survival checks to track them and Intelligence checks to recall information about them. Gain one language they speak." },
+        { "name": "Natural Explorer", "description": "Choose a favored terrain. While traveling for an hour or more in your terrain: difficult terrain doesn't slow group, can't become lost, group moves stealthily at normal pace, find twice as much food, track while moving at normal pace, +Intelligence to initiative against hidden enemies." }
+      ],
+      "2": [
+        { "name": "Fighting Style", "description": "Choose a fighting style.", "type": "fighting_style", "options": ["Archery", "Defense", "Dueling", "Two-Weapon Fighting", "Blind Fighting", "Druidic Warrior", "Mariner", "Mounted Combatant", "Thrown Weapon Fighting"] },
+        { "name": "Spellcasting", "description": "You know 2 1st-level spells and prepare ranger spells using Wisdom." },
+        { "name": "Spellcasting Focus", "description": "You can use a druidic focus as your spellcasting focus." }
+      ],
+      "3": [
+        { "name": "Ranger Archetype", "description": "Choose a Ranger Archetype: Hunter, Beast Master, Gloom Stalker, or another archetype." },
+        { "name": "Primeval Awareness", "description": "Spend a spell slot to detect the presence of aberrations, celestials, dragons, elementals, fey, fiends, and undead within 1 mile (6 miles in favored terrain)." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." }
+      ],
+      "6": [
+        { "name": "Favored Enemy Improvement", "description": "Choose an additional favored enemy and type of favored terrain. Your bonus to checks against favored enemies increases." },
+        { "name": "Ranger Archetype Feature", "description": "Gain your archetype's 6th-level feature." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Land's Stride", "description": "Moving through nonmagical difficult terrain costs no extra movement. Immunity to plants that magically impede movement." }
+      ],
+      "10": [
+        { "name": "Hide in Plain Sight", "description": "Spend 1 minute creating camouflage. Gain +10 to Stealth checks in natural terrain until you move, attack, or cast a spell." },
+        { "name": "Ranger Archetype Feature", "description": "Gain your archetype's 10th-level feature." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "14": [
+        { "name": "Favored Enemy Improvement", "description": "Choose an additional favored enemy and type of favored terrain." },
+        { "name": "Vanish", "description": "As a bonus action, you can attempt to hide even when only lightly obscured." }
+      ],
+      "15": [
+        { "name": "Ranger Archetype Feature", "description": "Gain your archetype's 15th-level feature." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "18": [
+        { "name": "Feral Senses", "description": "You cannot be surprised while conscious. Invisible creatures within 30 feet don't have advantage on attacks against you." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Foe Slayer", "description": "Once per turn, add your Wisdom modifier to attack roll against one of your favored enemies. Can see invisible creatures within 30 feet." }
+      ],
+      "subclasses": {
+        "Hunter": {
+          "3": [
+            { "name": "Hunter's Prey", "description": "Choose one: Colossus Slayer (extra 1d8 damage once per turn vs wounded), Giant Killer (reaction attack when large+ creature enters reach), or Horde Breaker (extra attack vs different creature within 5 ft)." }
+          ],
+          "7": [
+            { "name": "Defensive Tactics", "description": "Escape the Horde (opportunity attacks don't end movement), Multiattack Defense (+4 AC vs multiattack), or Steel Will (advantage on Wis/Cha saves)." }
+          ],
+          "11": [
+            { "name": "Multiattack", "description": "Choose one: Volley (attack every creature within 10 ft of a point, 30 ft range), Whirlwind Attack (melee attack every creature adjacent), or Volley/Whirlwind." }
+          ],
+          "15": [
+            { "name": "Superior Hunter's Defense", "description": "Evasion, Stand Against the Tide (reaction to redirect melee attack to another creature), or Uncanny Dodge." }
+          ]
+        },
+        "Beast Master": {
+          "3": [
+            { "name": "Ranger's Companion", "description": "Gain a beast companion. It acts on your initiative, can move and use its action on its own. Use your bonus action to command it to Attack, Dash, Disengage, Dodge, or Help." }
+          ],
+          "7": [
+            { "name": "Exceptional Training", "description": "On your turn, your companion can take the Dash, Disengage, or Help action as a bonus action." }
+          ],
+          "11": [
+            { "name": "Bestial Fury", "description": "Your companion can make two attacks when you command it to Attack." }
+          ],
+          "15": [
+            { "name": "Share Spells", "description": "When you cast a spell targeting yourself, you can also target your companion if it is within 30 feet." }
+          ]
+        },
+        "Gloom Stalker": {
+          "3": [
+            { "name": "Dread Ambusher", "description": "On the first turn of combat, gain +Wis mod to initiative and extra attack. First attack deals extra 1d8 damage." },
+            { "name": "Gloom Stalker Magic", "description": "Learn disguise self at 2nd level." }
+          ],
+          "5": [
+            { "name": "Umbral Sight", "description": "You gain darkvision up to 60 feet. If you already have darkvision, extend it by 30 feet. Invisible in dim light/darkness." }
+          ],
+          "7": [
+            { "name": "Iron Mind", "description": "Proficiency in Wisdom saves." }
+          ],
+          "11": [
+            { "name": "Stalker's Flurry", "description": "Once per turn when you miss with a weapon attack, make another attack against the same target." }
+          ],
+          "15": [
+            { "name": "Shadow Step", "description": "When in dim light/darkness, use bonus action to teleport up to 60 feet. Gain advantage on next melee attack." }
+          ]
+        }
+      }
+    }
+  },
+  "rogue": {
+    "hitDie": 8,
+    "spellcaster": false,
+    "casterType": null,
+    "features": {
+      "1": [
+        { "name": "Expertise", "description": "Choose two of your skill proficiencies (or thieves' tools). Your proficiency bonus is doubled for ability checks with those skills." },
+        { "name": "Sneak Attack", "description": "Once per turn, deal extra 1d6 damage to one creature you hit with a finesse or ranged weapon if you have advantage or an ally is within 5 feet." },
+        { "name": "Thieves' Cant", "description": "You know thieves' cant, a secret mix of dialect, jargon, and code used by rogues." }
+      ],
+      "2": [
+        { "name": "Cunning Action", "description": "Take a bonus action on each turn to Dash, Disengage, or Hide." }
+      ],
+      "3": [
+        { "name": "Roguish Archetype", "description": "Choose a Roguish Archetype: Thief, Assassin, Arcane Trickster, or another archetype." },
+        { "name": "Sneak Attack (2d6)", "description": "Sneak Attack damage increases to 2d6." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Uncanny Dodge", "description": "Use your reaction to halve the damage from an attack against you." },
+        { "name": "Sneak Attack (3d6)", "description": "Sneak Attack damage increases to 3d6." }
+      ],
+      "6": [
+        { "name": "Expertise", "description": "Choose two more skill proficiencies to gain expertise in." }
+      ],
+      "7": [
+        { "name": "Evasion", "description": "Dexterity saves: no damage on success, half damage on failure." },
+        { "name": "Sneak Attack (4d6)", "description": "Sneak Attack damage increases to 4d6." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Sneak Attack (5d6)", "description": "Sneak Attack damage increases to 5d6." }
+      ],
+      "10": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Sneak Attack (5d6)", "description": "Sneak Attack damage increases to 5d6." }
+      ],
+      "11": [
+        { "name": "Reliable Talent", "description": "When you make an ability check with a skill in which you have proficiency, treat a roll of 9 or lower as a 10." },
+        { "name": "Sneak Attack (6d6)", "description": "Sneak Attack damage increases to 6d6." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "Sneak Attack (7d6)", "description": "Sneak Attack damage increases to 7d6." }
+      ],
+      "14": [
+        { "name": "Blindsense", "description": "If able to hear, detect location of hidden creatures within 10 feet." },
+        { "name": "Sneak Attack (8d6)", "description": "Sneak Attack damage increases to 8d6." }
+      ],
+      "15": [
+        { "name": "Slippery Mind", "description": "Gain proficiency in Wisdom saving throws." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Sneak Attack (9d6)", "description": "Sneak Attack damage increases to 9d6." }
+      ],
+      "18": [
+        { "name": "Elusive", "description": "No attack roll can have advantage against you while you are not incapacitated." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." },
+        { "name": "Sneak Attack (10d6)", "description": "Sneak Attack damage increases to 10d6." }
+      ],
+      "20": [
+        { "name": "Stroke of Luck", "description": "Once per short rest, treat an attack roll, ability check, or saving throw of your choice as a natural 20." }
+      ],
+      "subclasses": {
+        "Thief": {
+          "3": [
+            { "name": "Fast Hands", "description": "Use Cunning Action to make a Dexterity (Sleight of Hand) check, use thieves' tools to disarm a trap or open a lock, or take the Use an Object action." },
+            { "name": "Second-Story Work", "description": "Climbing speed equals walking speed. When you make a running jump, distance increases by feet equal to Dexterity modifier." }
+          ],
+          "9": [
+            { "name": "Supreme Sneak", "description": "You have advantage on Dexterity (Stealth) checks if you move no more than half your speed." }
+          ],
+          "13": [
+            { "name": "Use Magic Device", "description": "Ignore class, race, level, and spell prerequisites when using magic items." }
+          ],
+          "17": [
+            { "name": "Thief's Reflexes", "description": "Take two turns during the first round of combat. On the second turn, only take the Attack or Help action." }
+          ]
+        },
+        "Assassin": {
+          "3": [
+            { "name": "Assassinate", "description": "Advantage on attack rolls against creatures that haven't acted yet. Any hit against a surprised creature is a critical hit." },
+            { "name": "Bonus Proficiencies", "description": "Proficiency with disguise kit and poisoner's kit." },
+            { "name": "Infiltration Expertise", "description": "Spend 1 hour and 25 gp to create a disguise. Take 1 minute to don. Can also forge documents." }
+          ],
+          "9": [
+            { "name": "Impostor", "description": "Gain the ability to unerringly mimic another person's speech, writing, and behavior." }
+          ],
+          "13": [
+            { "name": "Death Strike", "description": "When you attack and hit a surprised creature, deal extra 2d6 damage. If the attack is a crit, double the extra dice." }
+          ],
+          "17": [
+            { "name": "Strike and Hide", "description": "When you hit a creature with a weapon attack and deal damage, you can attempt to hide." }
+          ]
+        },
+        "Arcane Trickster": {
+          "3": [
+            { "name": "Spellcasting", "description": "Learn 3 cantrips and prepare wizard spells. Use Intelligence. This makes you a 1/3 caster." },
+            { "name": "Mage Hand Legerdemain", "description": "Your Mage Hand can pick locks and disarm traps. It is invisible." }
+          ],
+          "4": [
+            { "name": "Mage Hand Trick", "description": "You can stow one object the hand is holding in a container worn or carried by another creature." }
+          ],
+          "7": [
+            { "name": "Versatile Trickster", "description": "Use your Mage Hand to distract a creature within 5 feet of the hand, giving advantage on your attack against that creature." }
+          ],
+          "8": [
+            { "name": "Magic Ambush", "description": "If you are hidden from a creature when you cast a spell on it, it has disadvantage on the first saving throw." }
+          ],
+          "13": [
+            { "name": "Spell Thief", "description": "When a creature casts a spell targeting you, use your reaction to steal the spell (if it's 1st level). Use a spell slot of 1st level or higher to cast it as your reaction (Cha mod/long rest)." }
+          ],
+          "17": [
+            { "name": "Opportunist", "description": "When a creature within 5 feet is hit by an attack, use your reaction to make a melee attack against it." }
+          ]
+        }
+      }
+    }
+  },
+  "sorcerer": {
+    "hitDie": 6,
+    "spellcaster": true,
+    "casterType": "full",
+    "features": {
+      "1": [
+        { "name": "Spellcasting", "description": "You know 4 cantrips and 2 1st-level sorcerer spells. Use Charisma as your spellcasting ability." },
+        { "name": "Sorcerous Origin", "description": "Choose a Sorcerous Origin: Draconic Bloodline, Wild Magic, or another origin. Grants origin-specific features." }
+      ],
+      "2": [
+        { "name": "Font of Magic", "description": "Gain Sorcery Points equal to your level. Convert spell slots to sorcery points (1st=1pt, 2nd=2pt, etc.) or create spell slots from sorcery points." }
+      ],
+      "3": [
+        { "name": "Metamagic", "description": "Choose 2 Metamagic options. Spend sorcery points to modify spells: Twinned Spell (double a single-target spell), Subtle Spell (no components), Empowered Spell (reroll damage), etc." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "3rd-Level Spells", "description": "You can now know 3rd-level spells." },
+        { "name": "Sorcerous Restoration", "description": "Regain 4 expended sorcery points when you finish a short rest." }
+      ],
+      "6": [
+        { "name": "Sorcerous Origin Feature", "description": "Gain your origin's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "4th-Level Spells", "description": "You can now know 4th-level spells." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "5th-Level Spells", "description": "You can now know 5th-level spells." }
+      ],
+      "10": [
+        { "name": "Metamagic", "description": "Choose another Metamagic option." }
+      ],
+      "11": [
+        { "name": "6th-Level Spells", "description": "You can now know 6th-level spells." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "7th-Level Spells", "description": "You can now know 7th-level spells." }
+      ],
+      "14": [
+        { "name": "Sorcerous Origin Feature", "description": "Gain your origin's 14th-level feature." }
+      ],
+      "15": [
+        { "name": "8th-Level Spells", "description": "You can now know 8th-level spells." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Metamagic", "description": "Choose another Metamagic option." },
+        { "name": "9th-Level Spells", "description": "You can now know 9th-level spells." }
+      ],
+      "18": [
+        { "name": "Sorcerous Origin Feature", "description": "Gain your origin's 18th-level feature." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Sorcerous Restoration", "description": "Regain 4 expended sorcery points when you finish a short rest." },
+        { "name": "Sorcerous Versatility", "description": "When you finish a long rest, replace one cantrip or one sorcerer spell known of 1st level or higher." }
+      ],
+      "subclasses": {
+        "Draconic Bloodline": {
+          "1": [
+            { "name": "Draconic Resilience", "description": "HP increases by 1 per level. AC equals 13 + Dexterity modifier while not wearing armor. Gain resistance to one damage type based on dragon ancestry." }
+          ],
+          "6": [
+            { "name": "Elemental Affinity", "description": "When you cast a spell dealing your draconic ancestry damage type, add Charisma modifier to one damage roll. You learn the absorb elements spell." }
+          ],
+          "14": [
+            { "name": "Dragon Wings", "description": "Spend 1 sorcery point to sprout spectral wings, granting a flying speed of 60 feet for 1 hour." }
+          ],
+          "18": [
+            { "name": "Draconic Presence", "description": "Spend 5 sorcery points as an action: 60-foot aura of dread. Enemies make Wis save or be frightened for 1 minute." }
+          ]
+        },
+        "Wild Magic": {
+          "1": [
+            { "name": "Wild Magic Surge", "description": "When you cast a sorcerer spell of 1st level or higher, roll a d20. On a 1, roll on the Wild Magic Surge table for a random effect." }
+          ],
+          "6": [
+            { "name": "Bend Luck", "description": "When a creature makes an attack roll, ability check, or saving throw, spend 1 sorcery point to roll 1d4 and add or subtract the result." }
+          ],
+          "14": [
+            { "name": "Controlled Chaos", "description": "When you roll on the Wild Magic table, you can choose to reroll and use the new result." }
+          ],
+          "18": [
+            { "name": "Spell Bombardment", "description": "When you roll damage for a spell and roll the maximum, roll that die one more time and add it." }
+          ]
+        },
+        "Clockwork Soul": {
+          "1": [
+            { "name": "Clockwork Magic", "description": "Learn the spells alarm and shield. You can cast them as 1st-level spells without expending spell slots. Always have them prepared." },
+            { "name": "Restore Balance", "description": "When a creature within 30 feet makes an attack roll or saving throw, use reaction to add 1d8 to the roll (or subtract). WisMod/long rest." }
+          ],
+          "6": [
+            { "name": "Bastion of Law", "description": "Spend sorcery points to create a ward. When creature takes damage, reduce by ward amount. Ward lasts 1 minute." }
+          ],
+          "14": [
+            { "name": "Trance of Order", "description": "Spend 1 sorcery point to enter a trance for 1 minute. Attack rolls against you have disadvantage, and you cannot be surprised." }
+          ],
+          "18": [
+            { "name": "Clockwork Cavalcade", "description": "Spend 7 sorcery points to summon clockwork spirits. Each creature you choose regains HP, or gains temporary HP. Effects last 1 minute." }
+          ]
+        }
+      }
+    }
+  },
+  "warlock": {
+    "hitDie": 8,
+    "spellcaster": true,
+    "casterType": "warlock",
+    "features": {
+      "1": [
+        { "name": "Pact Magic", "description": "You know 2 cantrips and learn 1st-level warlock spells. Use Charisma as your spellcasting ability. You have one 1st-level spell slot that recharges on a short rest." },
+        { "name": "Otherworldly Patron", "description": "Choose a patron: The Fiend, The Great Old One, The Archfey, The Celestial, or another patron." },
+        { "name": "Eldritch Invocations", "description": "Learn 2 invocations of your choice from the warlock invocation list." }
+      ],
+      "2": [
+        { "name": "Eldritch Invocations", "description": "Learn an additional invocation." },
+        { "name": "Pact Boon", "description": "Choose a Pact Boon: Pact of the Blade, Pact of the Tome, or Pact of the Chain." }
+      ],
+      "3": [
+        { "name": "Pact Magic: 2nd-Level Slots", "description": "You now have two 2nd-level spell slots." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Pact Magic: 3rd-Level Slots", "description": "You now have two 3rd-level spell slots." },
+        { "name": "Eldritch Invocations", "description": "Learn an additional invocation." }
+      ],
+      "6": [
+        { "name": "Eldritch Invocations", "description": "Learn an additional invocation." }
+      ],
+      "7": [
+        { "name": "Pact Magic: 4th-Level Slots", "description": "You now have two 4th-level spell slots." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Pact Magic: 5th-Level Slots", "description": "You now have two 5th-level spell slots." },
+        { "name": "Mystic Arcanum (6th)", "description": "Choose one 6th-level spell from the warlock spell list. Cast it once per long rest without expending a slot." }
+      ],
+      "10": [
+        { "name": "Eldritch Invocations", "description": "Learn an additional invocation." }
+      ],
+      "11": [
+        { "name": "Pact Magic: 5th-Level Slots (3)", "description": "You now have three 5th-level spell slots." },
+        { "name": "Mystic Arcanum (7th)", "description": "Choose one 7th-level spell from the warlock spell list. Cast it once per long rest." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "Mystic Arcanum (8th)", "description": "Choose one 8th-level spell from the warlock spell list. Cast it once per long rest." }
+      ],
+      "14": [
+        { "name": "Eldritch Invocations", "description": "Learn an additional invocation." }
+      ],
+      "15": [
+        { "name": "Mystic Arcanum (9th)", "description": "Choose one 9th-level spell from the warlock spell list. Cast it once per long rest." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Pact Magic: 5th-Level Slots (4)", "description": "You now have four 5th-level spell slots." }
+      ],
+      "18": [
+        { "name": "Eldritch Invocations", "description": "Learn an additional invocation." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Eldritch Master", "description": "Once per long rest, spend 1 minute in meditation to regain all expended warlock spell slots." }
+      ],
+      "subclasses": {
+        "The Fiend": {
+          "1": [
+            { "name": "Dark One's Blessing", "description": "When you reduce a hostile creature to 0 HP, gain temporary HP equal to your warlock level + Charisma modifier." }
+          ],
+          "6": [
+            { "name": "Dark One's Own Luck", "description": "Spend 1 luck point (Warlock level/long rest) to add 1d10 to an ability check or saving throw." }
+          ],
+          "10": [
+            { "name": "Fiendish Resilience", "description": "Choose a damage type. Gain resistance to that damage type. Can change on a long rest." }
+          ],
+          "14": [
+            { "name": "Hurl Through Hell", "description": "When you hit a creature with an attack, banish it to the Lower Planes until the start of your next turn. It takes 10d10 psychic damage." }
+          ]
+        },
+        "The Great Old One": {
+          "1": [
+            { "name": "Awakened Mind", "description": "You can communicate telepathically with any creature within 30 feet." }
+          ],
+          "6": [
+            { "name": "Entropic Ward", "description": "When a creature targets you with an attack, use reaction to impose disadvantage. If it misses, you have advantage on your next attack against it. ChaMod/long rest." }
+          ],
+          "10": [
+            { "name": "Thought Shield", "description": "Resistance to psychic damage. When a creature deals psychic damage to you, take that damage instead." }
+          ],
+          "14": [
+            { "name": "Create Thrall", "description": "You can touch a humanoid and charm it. It obeys your commands (no self-harm) and is charmed for 24 hours." }
+          ]
+        },
+        "The Archfey": {
+          "1": [
+            { "name": "Fey Presence", "description": "As an action, each creature of your choice within 10 feet must make a Wisdom save or be charmed or frightened by you for 1 minute (ChaMod/short rest)." }
+          ],
+          "6": [
+            { "name": "Misty Escape", "description": "When you take damage, use your reaction to teleport to an unoccupied space and turn invisible until the end of your next turn. ChaMod/short rest." }
+          ],
+          "10": [
+            { "name": "Beguiling Defenses", "description": "You are immune to being charmed, and when a creature tries to charm you, you can turn it back on them (Cha save or charmed by you for 1 minute)." }
+          ],
+          "14": [
+            { "name": "Dark Delirium", "description": "As an action, choose a point within 60 feet. Creatures in a 20-foot sphere make Wis saves or take 4d10 psychic damage and be frightened." }
+          ]
+        },
+        "The Celestial": {
+          "1": [
+            { "name": "Healing Light", "description": "When you or a creature within 30 feet takes damage, use reaction to restore HP equal to 1d6 + warlock level + Charisma modifier. ChaMod/long rest." }
+          ],
+          "6": [
+            { "name": "Radiant Soul", "description": "Gain flying speed of 30 feet for 1 minute when in dim light or darkness. ChaMod/long rest." }
+          ],
+          "10": [
+            { "name": "Celestial Resistance", "description": "Resistance to radiant and necrotic damage." }
+          ],
+          "14": [
+            { "name": "Undying", "description": "When you would be reduced to 0 HP, drop to 1 HP instead. Once per long rest." }
+          ]
+        }
+      }
+    }
+  },
+  "wizard": {
+    "hitDie": 6,
+    "spellcaster": true,
+    "casterType": "full",
+    "features": {
+      "1": [
+        { "name": "Spellcasting", "description": "You know 6 cantrips and have a spellbook. Prepare spells from the wizard spell list using Intelligence. Learn 2 spells per level." },
+        { "name": "Arcane Recovery", "description": "Once per day during a short rest, recover spell slots with a combined level equal to half your wizard level (rounded up)." }
+      ],
+      "2": [
+        { "name": "Arcane Tradition", "description": "Choose an Arcane Tradition: School of Evocation, School of Abjuration, School of Illusion, School of Enchantment, School of Necromancy, or another school." }
+      ],
+      "3": [
+        { "name": "2nd-Level Spells", "description": "You can now prepare and cast 2nd-level spells." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "3rd-Level Spells", "description": "You can now prepare and cast 3rd-level spells." }
+      ],
+      "6": [
+        { "name": "Arcane Tradition Feature", "description": "Gain your tradition's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "4th-Level Spells", "description": "You can now prepare and cast 4th-level spells." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "5th-Level Spells", "description": "You can now prepare and cast 5th-level spells." }
+      ],
+      "10": [
+        { "name": "Arcane Tradition Feature", "description": "Gain your tradition's 10th-level feature." }
+      ],
+      "11": [
+        { "name": "6th-Level Spells", "description": "You can now prepare and cast 6th-level spells." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "7th-Level Spells", "description": "You can now prepare and cast 7th-level spells." }
+      ],
+      "14": [
+        { "name": "Arcane Tradition Feature", "description": "Gain your tradition's 14th-level feature." }
+      ],
+      "15": [
+        { "name": "8th-Level Spells", "description": "You can now prepare and cast 8th-level spells." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "9th-Level Spells", "description": "You can now prepare and cast 9th-level spells." }
+      ],
+      "18": [
+        { "name": "Spell Mastery", "description": "Choose a 1st-level and a 2nd-level spell. Cast them at their lowest level without expending spell slots. Can change on a long rest." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Signature Spells", "description": "Choose two 3rd-level wizard spells. Cast them at their lowest level without expending spell slots once each per long rest." }
+      ],
+      "subclasses": {
+        "School of Evocation": {
+          "2": [
+            { "name": "Evocation Savant", "description": "Gold and time to copy evocation spells into your spellbook is halved." },
+            { "name": "Sculpt Spells", "description": "When you cast an evocation spell that affects other creatures, choose a number equal to 1 + spell level. Those creatures automatically succeed on their saves and take no damage." }
+          ],
+          "6": [
+            { "name": "Potent Cantrip", "description": "Your damaging cantrips deal additional damage equal to your Intelligence modifier to creatures that fail their saving throws." }
+          ],
+          "10": [
+            { "name": "Empowered Evocation", "description": "Add your Intelligence modifier to damage rolls of wizard evocation spells." }
+          ],
+          "14": [
+            { "name": "Overchannel", "description": "Cast a wizard evocation spell of 1st-5th level at maximum damage. Take 2d12 necrotic damage per spell level above 1st. Once per short rest." }
+          ]
+        },
+        "School of Abjuration": {
+          "2": [
+            { "name": "Abjuration Savant", "description": "Gold and time to copy abjuration spells into your spellbook is halved." },
+            { "name": "Arcane Ward", "description": "Create a magical ward with HP equal to twice your wizard level + Intelligence modifier. Reduces damage you take. Recharges when you cast an abjuration spell of 1st level or higher." }
+          ],
+          "6": [
+            { "name": "Projected Ward", "description": "When a creature within 30 feet takes damage, use your reaction to have your ward absorb the damage." }
+          ],
+          "10": [
+            { "name": "Improved Abjuration", "description": "Add half your wizard level (rounded up) to spell save DCs of abjuration spells you cast." }
+          ],
+          "14": [
+            { "name": "Spell Resistance", "description": "Gain advantage on saving throws against spells. Resistance to damage from spells." }
+          ]
+        },
+        "School of Necromancy": {
+          "2": [
+            { "name": "Necromancy Savant", "description": "Gold and time to copy necromancy spells into your spellbook is halved." },
+            { "name": "Grim Harvest", "description": "When you kill a creature with a spell of 1st level or higher, regain HP equal to 2× the spell's level (or 3× if necromancy). No effect on constructs or undead." }
+          ],
+          "6": [
+            { "name": "Undead Thralls", "description": "When you cast animate dead, you can target up to 3 additional corpses. The created undead have additional HP and add your proficiency bonus to weapon damage." }
+          ],
+          "10": [
+            { "name": "Inured to Undeath", "description": "Resistance to necrotic damage. Your hit point maximum cannot be reduced." }
+          ],
+          "14": [
+            { "name": "Command Undead", "description": "You can cast dominate undead once per long rest. Charisma is your spellcasting ability for it." }
+          ]
+        },
+        "School of Illusion": {
+          "2": [
+            { "name": "Illusion Savant", "description": "Gold and time to copy illusion spells into your spellbook is halved." },
+            { "name": "Improved Minor Illusion", "description": "You learn the minor illusion cantrip. When you cast it, you can create both a sound and an image simultaneously." }
+          ],
+          "6": [
+            { "name": "Malleable Illusions", "description": "When you cast an illusion spell that requires concentration, you can use your action to change the nature of the illusion." }
+          ],
+          "10": [
+            { "name": "Illusory Self", "description": "When attacked, use your reaction to create an illusory duplicate of yourself. The attack hits the duplicate instead. Usable once per short rest." }
+          ],
+          "14": [
+            { "name": "Illusory Reality", "description": "Choose one creature you can see to briefly believe an illusion is real. The creature treats the illusion as a real object for 1 minute." }
+          ]
+        },
+        "School of Enchantment": {
+          "2": [
+            { "name": "Enchantment Savant", "description": "Gold and time to copy enchantment spells into your spellbook is halved." },
+            { "name": "Hypnotic Gaze", "description": "As an action, choose one creature within 5 feet. It must make a Wisdom save or be charmed by you until end of your next turn. ChaMod/long rest." }
+          ],
+          "6": [
+            { "name": "Instinctive Charm", "description": "When a creature makes an attack against you, you can use your reaction to divert the attack to the nearest creature (other than the attacker). WisMod/long rest." }
+          ],
+          "10": [
+            { "name": "Split Enchantment", "description": "When you cast an enchantment spell of 1st level or higher that targets one creature, you can target a second creature within range." }
+          ],
+          "14": [
+            { "name": "Alter Memories", "description": "When a creature succeeds on a save against your enchantment spell, you can use your reaction to force it to make a second save." }
+          ]
+        }
+      }
+    }
+  },
+  "artificer": {
+    "hitDie": 8,
+    "spellcaster": true,
+    "casterType": "full",
+    "features": {
+      "1": [
+        { "name": "Spellcasting", "description": "You know 2 cantrips and prepare artificer spells using Intelligence. Your spellcasting focus is your artisan tools." },
+        { "name": "Magical Tinkering", "description": "Use your action on a Tiny nonmagical object to give it one of the following properties: produce a sound/message, shed dim light (5 ft), or emit a smell. Lasts until your next turn or 1 hour for smell." }
+      ],
+      "2": [
+        { "name": "Infuse Item", "description": "Gain the ability to infuse items with magical enhancements. Number of infusions equals half your artificer level (rounded up)." },
+        { "name": "Tool Expertise", "description": "Double your proficiency bonus for ability checks using tools." }
+      ],
+      "3": [
+        { "name": "Artificer Specialist", "description": "Choose a specialty: Artillerist, Armorer, or Alchemist. Grants specialty-specific features." },
+        { "name": "The Right Tool for the Job", "description": "You can craft a set of artisan's tools in 1 hour. They function as any artisan's tools you choose." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "3rd-Level Spells", "description": "You can now prepare 3rd-level spells." }
+      ],
+      "6": [
+        { "name": "Tool Expertise", "description": "Double your proficiency bonus for ability checks with your chosen tools." },
+        { "name": "Artificer Specialist Feature", "description": "Gain your specialist's 6th-level feature." }
+      ],
+      "7": [
+        { "name": "4th-Level Spells", "description": "You can now prepare 4th-level spells." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "5th-Level Spells", "description": "You can now prepare 5th-level spells." }
+      ],
+      "10": [
+        { "name": "Magic Item Adept", "description": "Attune to up to 4 magic items at once." },
+        { "name": "Artificer Specialist Feature", "description": "Gain your specialist's 10th-level feature." }
+      ],
+      "11": [
+        { "name": "6th-Level Spells", "description": "You can now prepare 6th-level spells." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "14": [
+        { "name": "Magic Item Savant", "description": "Attune to up to 5 magic items at once." }
+      ],
+      "15": [
+        { "name": "7th-Level Spells", "description": "You can now prepare 7th-level spells." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "18": [
+        { "name": "Magic Item Master", "description": "Attune to up to 6 magic items at once." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Soul of Artifice", "description": "Gain a +1 bonus to all saving throws per magic item you are attuned to." }
+      ],
+      "subclasses": {
+        "Artillerist": {
+          "3": [
+            { "name": "Artillerist Spells", "description": "Always have shield, thunderclap, scorching ray, shatter, fireball, wind wall, ice storm, wall of fire, cone of cold prepared." },
+            { "name": "Eldritch Cannon", "description": "Learn to summon an Eldritch Cannon (tiny construct). It acts on your turn, and you can command it as a bonus action. Options: Force Ballista, Flame Thrower, Protector." }
+          ],
+          "5": [
+            { "name": "Arcane Firearm", "description": "You can transform a magic wand, rod, or staff into an arcane firearm. It can be used as a spellcasting focus. Once per turn, a spell attack from it deals extra 1d8 force damage." }
+          ],
+          "9": [
+            { "name": "Explosive Cannon", "description": "When your Eldritch Cannon fires, it can explode. Each creature in the area must make a Dex save or take 2d8 damage." }
+          ],
+          "15": [
+            { "name": "Fortified Position", "description": "As an action, deploy your cannon in an area. You and allies gain half cover (+2 AC) while within 10 feet of it." }
+          ]
+        },
+        "Armorer": {
+          "3": [
+            { "name": "Armor Model", "description": "Choose a model: Guardian (heavy armor, replaces Dex with Int for AC, martial weapons) or Infiltrator (medium armor, Int for AC, stealth). You gain proficiency with smith's tools." },
+            { "name": "Arcane Armor", "description": "Magically bond with armor you wear. It cannot be removed against your will. Integrates weapons and tools." }
+          ],
+          "5": [
+            { "name": "Armor Modifications", "description": "Add your Intelligence modifier to damage rolls with Thunder Gauntlets and Lightning Launcher." }
+          ],
+          "9": [
+            { "name": "Armor Model Feature", "description": "Guardian: electrified armor (Thunder Gauntlets shock attackers). Infiltrator: infiltrator's expertise (advantage on Stealth)." }
+          ],
+          "15": [
+            { "name": "Perfected Armor", "description": "Guardian: anyone who hits you with melee takes force damage. Infiltrator: you can cast invisibility on yourself without expending spell slots (IntMod/long rest)." }
+          ]
+        },
+        "Alchemist": {
+          "3": [
+            { "name": "Alchemist Spells", "description": "Always have healing word, ray of sickness, purification, lesser restoration, blinding smite, haste, mass healing word, greater restoration, heal prepared." },
+            { "name": "Experimental Elixir", "description": "During a long rest, create a number of experimental elixirs equal to your Intelligence modifier (min 1). Random or chosen effects: healing, swiftness, resilience, boldness." }
+          ],
+          "5": [
+            { "name": "Alchemical Savant", "description": "When you use alchemist's supplies as your spellcasting focus, add your Intelligence modifier to healing dealt or damage dealt (if the spell has a potion/brew theme)." }
+          ],
+          "9": [
+            { "name": "Restorative Reagents", "description": "When you administer a potion or elixir to a creature, they gain additional benefits based on the type." }
+          ],
+          "15": [
+            { "name": "Master Alchemist", "description": "You can produce enough alchemical materials for free during a long rest. You can also create more powerful versions of your elixirs." }
+          ]
+        }
+      }
+    }
+  },
+  "bloodhunter": {
+    "hitDie": 12,
+    "spellcaster": false,
+    "casterType": null,
+    "features": {
+      "1": [
+        { "name": "Blood Maledict", "description": "Gain hemocraft dice that can be used to amplify Blood Curse effects. The die increases with level (d4 at 1st, d6 at 5th, d8 at 9th, d10 at 13th, d12 at 17th)." },
+        { "name": "Blood Curses", "description": "Learn a Blood Curse of your choice. Blood Curses are special abilities that cost hemocraft dice and sometimes HP to use." },
+        { "name": "Darkvision", "description": "Gain darkvision with a range of 60 feet." }
+      ],
+      "2": [
+        { "name": "Fighting Style", "description": "Choose a fighting style.", "type": "fighting_style", "options": ["Archery", "Defense", "Dueling", "Great Weapon Fighting", "Two-Weapon Fighting"] },
+        { "name": "Crimson Rite", "description": "As a bonus action, imbue your weapon with hemocraft. Attacks deal extra rite damage based on level (1d4 at 2nd). Lose HP equal to your level when you activate." }
+      ],
+      "3": [
+        { "name": "Hunter's Bane", "description": "Gain advantage on Survival checks to track fey, fiends, and undead. Also gain advantage on Intelligence checks to recall information about them." },
+        { "name": "Blood Curse", "description": "Learn an additional Blood Curse." }
+      ],
+      "4": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "5": [
+        { "name": "Extra Attack", "description": "You can attack twice when you take the Attack action." },
+        { "name": "Blood Maledict (d6)", "description": "Your hemocraft die increases to a d6." }
+      ],
+      "6": [
+        { "name": "Blood Curse", "description": "Learn an additional Blood Curse." }
+      ],
+      "7": [
+        { "name": "Brand of Castigation", "description": "When you hit a marked creature with an attack, it must make a Wisdom save or take additional rite damage." }
+      ],
+      "8": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "9": [
+        { "name": "Blood Maledict (d8)", "description": "Your hemocraft die increases to a d8." },
+        { "name": "Hardened", "description": "Gain proficiency in either Strength or Constitution saving throws." }
+      ],
+      "10": [
+        { "name": "Blood Curse", "description": "Learn an additional Blood Curse." }
+      ],
+      "11": [
+        { "name": "Dark augmentation", "description": "Your Crimson Rite damage increases to 2d6." }
+      ],
+      "12": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "13": [
+        { "name": "Blood Maledict (d10)", "description": "Your hemocraft die increases to a d10." },
+        { "name": "Sanguine Recall", "description": "When you use Second Wind or a similar feature, regain additional HP equal to your hemocraft die + proficiency bonus." }
+      ],
+      "14": [
+        { "name": "Blood Curse", "description": "Learn an additional Blood Curse." }
+      ],
+      "15": [
+        { "name": "Brand of Tethering", "description": "When you hit a creature marked with your brand, you can tether them to the ground (speed reduced to 0)." }
+      ],
+      "16": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "17": [
+        { "name": "Blood Maledict (d12)", "description": "Your hemocraft die increases to a d12." }
+      ],
+      "18": [
+        { "name": "Brand of the Crimson Immortal", "description": "Gain resistance to necrotic damage. When reduced to 0 HP, if you have Crimson Rite active, drop to 1 HP instead." }
+      ],
+      "19": [
+        { "name": "Ability Score Improvement", "description": "Increase one ability score by 2, or two ability scores by 1 each. Alternatively, take a feat." }
+      ],
+      "20": [
+        { "name": "Sanguine Mastery", "description": "Gain immunity to necrotic damage. Your Crimson Rite damage increases to 3d8. Brand effects become permanent." }
+      ],
+      "subclasses": {
+        "Order of the Mutant": {
+          "3": [
+            { "name": "Formulas", "description": "Learn mutagenic formulas that grant temporary enhancements at the cost of HP and hemocraft dice." },
+            { "name": "Predator", "description": "Gain darkvision (120 ft) and tremorsense (30 ft). Gain a swimming and climbing speed equal to your walking speed." }
+          ],
+          "7": [
+            { "name": "Advanced Mutagens", "description": "Gain access to higher-level mutagen options." }
+          ],
+          "11": [
+            { "name": "Strange Metabolism", "description": "Gain resistance to poison damage and advantage on Constitution saves." }
+          ],
+          "15": [
+            { "name": "Mutation", "description": "Choose a permanent mutation: additional attack, enhanced senses, or natural weapons." }
+          ]
+        },
+        "Order of the Ghostslayer": {
+          "3": [
+            { "name": "Rite of the Dawn", "description": "When you use Crimson Rite, you can choose to deal radiant damage instead of the normal type. Undead take additional damage equal to your hemocraft die." }
+          ],
+          "7": [
+            { "name": "Brand of the Fallen", "description": "When a creature marked with your brand dies within 30 feet, you gain temporary HP equal to your level." }
+          ],
+          "11": [
+            { "name": "Supernatural Resistance", "description": "Gain resistance to necrotic and radiant damage." }
+          ],
+          "15": [
+            { "name": "Rite Revival", "description": "Spend all your hemocraft dice to restore a dead creature to life. The creature returns with 1 HP." }
+          ]
+        },
+        "Order of the Profane Soul": {
+          "3": [
+            { "name": "Eldritch Versatility", "description": "Choose eldritch invocations and learn them based on your blood hunter level. You can select from the warlock invocation list." },
+            { "name": "Mystic Arcanum", "description": "At 7th level, learn a 1st-level warlock spell. At 11th, learn a 2nd-level. At 15th, learn a 3rd-level." }
+          ],
+          "7": [
+            { "name": "Eldritch Versatility Enhancement", "description": "Gain additional invocations and learn a warlock spell." }
+          ],
+          "11": [
+            { "name": "Eldritch Versatility Enhancement", "description": "Gain additional invocations and learn a higher-level warlock spell." }
+          ],
+          "15": [
+            { "name": "Eldritch Versatility Enhancement", "description": "Gain additional invocations and learn a higher-level warlock spell." }
+          ]
+        }
+      }
+    }
+  }
+}
