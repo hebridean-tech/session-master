@@ -4,8 +4,8 @@ import type { RequestHandler } from './$types';
 
 const handler = toSvelteKitHandler(auth);
 
-export const GET: RequestHandler = (event) => handler(event) as Response;
-export const POST: RequestHandler = (event) => handler(event) as Response;
-export const PUT: RequestHandler = (event) => handler(event) as Response;
-export const DELETE: RequestHandler = (event) => handler(event) as Response;
-export const PATCH: RequestHandler = (event) => handler(event) as Response;
+export const GET: RequestHandler = handler;
+export const POST: RequestHandler = handler;
+export const PUT: RequestHandler = handler;
+export const DELETE: RequestHandler = handler;
+export const PATCH: RequestHandler = handler;
