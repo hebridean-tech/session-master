@@ -1,6 +1,5 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import type { PageServerLoad } from './$types';
+  import { enhance } from '$app/forms';
 
   const timezones = [
     'America/New_York',
@@ -12,18 +11,7 @@
     'Pacific/Honolulu',
   ];
 
-  async function handleSubmit(e: SubmitEvent) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const data = new FormData(form);
-    const resp = await fetch('?/create', { method: 'POST', body: data, redirect: 'manual' });
-    if (resp.status === 303 || resp.ok) {
-      const location = resp.headers.get('location') || '/dashboard';
-      goto(location);
-    } else {
-      alert('Failed to create table');
-    }
-  }
+  let { data } = $props();
 </script>
 
 <svelte:head>
@@ -33,7 +21,13 @@
 <div class="max-w-lg mx-auto">
   <h1 class="text-2xl font-bold text-stone-100 mb-8">Create a Table</h1>
 
-  <form onsubmit={handleSubmit} class="space-y-5">
+  <form method="POST" action="?/create" use:enhance class="space-y-5">
+    {#if data?.error}
+      <div class="bg-red-900/50 border border-red-800 text-red-200 rounded px-4 py-3 text-sm">
+        {data.error}
+      </div>
+    {/if}
+
     <div>
       <label for="name" class="block text-sm font-medium text-stone-300 mb-1.5">Table Name</label>
       <input id="name" name="name" type="text" required placeholder="The Lost Mines of Phandelver"
