@@ -16,13 +16,12 @@
     e.preventDefault();
     const form = e.currentTarget;
     const data = new FormData(form);
-    const resp = await fetch('?/create', { method: 'POST', body: data });
-    if (resp.ok) {
-      const url = new URL(resp.url);
-      goto(url.pathname);
+    const resp = await fetch('?/create', { method: 'POST', body: data, redirect: 'manual' });
+    if (resp.status === 303 || resp.ok) {
+      const location = resp.headers.get('location') || '/dashboard';
+      goto(location);
     } else {
-      const result = await resp.json();
-      alert(result.error || 'Failed to create table');
+      alert('Failed to create table');
     }
   }
 </script>
