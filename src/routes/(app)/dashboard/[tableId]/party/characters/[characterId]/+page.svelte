@@ -6,6 +6,10 @@
   let dmNotesEditing = $state(false);
   let showDelete = $state(false);
   let deleting = $state(false);
+  let pdfParsing = $state(false);
+  let pdfParsed = $state(false);
+  let pdfApplying = $state(false);
+  let pendingPdfData = $state<any>(null);
   let activeTab = $state('overview');
 
   let spells = $state(data.spells || []);
@@ -46,6 +50,54 @@
       alert('Delete failed: ' + (data.error || 'Unknown error'));
     }
     deleting = false;
+  }
+
+  async function handlePdfReupload(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    if (!file || !sheetId) return;
+    pdfParsing = true;
+    pdfParsed = false;
+    pendingPdfData = null;
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('tableId', tableId);
+      formData.append('characterId', sheetId);
+      const resp = await fetch('/api/characters/' + sheetId + '/update-pdf', { method: 'POST', body: formData });
+      const result = await resp.json();
+      if (result.success && result.data) {
+        pendingPdfData = result.data;
+        pdfParsed = true;
+      } else {
+        alert('Failed to parse PDF: ' + (result.error || 'Unknown error'));
+      }
+    } catch (err: any) {
+      alert('Error: ' + err.message);
+    }
+    pdfParsing = false;
+    input.value = '';
+  }
+
+  async function applyPdfUpdate() {
+    if (!pendingPdfData) return;
+    pdfApplying = true;
+    try {
+      const resp = await fetch('/api/characters/' + sheetId + '/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableId, data: pendingPdfData }),
+      });
+      if (resp.ok) {
+        window.location.reload();
+      } else {
+        const d = await resp.json();
+        alert('Update failed: ' + (d.error || 'Unknown error'));
+      }
+    } catch (err: any) {
+      alert('Error: ' + err.message);
+    }
+    pdfApplying = false;
   }
 
   // Spells
@@ -184,7 +236,30 @@
         class="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-sm font-medium transition-colors min-h-[44px]">
         ⚔️ Combat
       </a>
+      {#if canEdit}
+        <label class="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-sm font-medium transition-colors min-h-[44px] cursor-pointer">
+          📄 Re-upload PDF
+          <input type="file" accept=".pdf" class="hidden" onchange={handlePdfReupload} />
+        </label>
+      {/if}
     </div>
+
+    {#if pdfParsing}
+      <div class="bg-stone-900 border border-amber-800/50 rounded-lg p-4 mb-4">
+        <p class="text-amber-400 text-sm">🔄 Parsing PDF with AI...</p>
+      </div>
+    {/if}
+
+    {#if pdfParsed && canEdit}
+      <div class="bg-stone-900 border border-amber-800/50 rounded-lg p-4 mb-4">
+        <p class="text-amber-300 text-sm font-medium mb-2">PDF parsed — confirm update?</p>
+        <p class="text-stone-400 text-xs mb-3">This will overwrite stats, spells, inventory, currency, and class entries.</p>
+        <div class="flex gap-2">
+          <button onclick={applyPdfUpdate} disabled={pdfApplying} class="px-3 py-2 bg-amber-600 hover:bg-amber-500 text-white text-sm rounded disabled:opacity-50">Apply Update</button>
+          <button onclick={() => { pdfParsed = null; pendingPdfData = null; }} class="px-3 py-2 text-stone-400 text-sm border border-stone-700 rounded hover:text-stone-200">Cancel</button>
+        </div>
+      </div>
+    {/if}
 
     <!-- Tab Bar -->
     <div class="flex gap-1 mb-6 border-b border-stone-800 overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0 scrollbar-none">
