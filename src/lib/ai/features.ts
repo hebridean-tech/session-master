@@ -55,7 +55,7 @@ export async function summarizeNote(noteId: string, tableId: string, userId: str
 // ── 5.5: Entity Extraction ──
 interface ExtractedEntity {
   name: string;
-  type: 'NPC' | 'Location' | 'Quest' | 'Faction' | 'Item' | 'Rumor';
+  type: 'NPC' | 'Location' | 'Quest' | 'Faction' | 'Item' | 'Rumor' | 'Player Character';
   summary: string;
   confidence: 'high' | 'medium' | 'low';
 }
@@ -73,12 +73,31 @@ export async function extractEntities(noteId: string, tableId: string, userId: s
   });
 
   try {
+    // Fetch party member names for disambiguation
+    let partyHint = '';
+    try {
+      const { db } = await import('$lib/db');
+      const { characterSheets, tableMembers } = await import('$lib/db/schema');
+      const { eq } = await import('drizzle-orm');
+      const sheets = await db.select({ characterName: characterSheets.characterName })
+        .from(characterSheets)
+        .innerJoin(tableMembers, eq(characterSheets.tableMemberId, tableMembers.id))
+        .where(eq(tableMembers.tableId, tableId));
+      if (sheets.length > 0) {
+        partyHint = `\n\nPARTY MEMBERS (these are player characters, NOT NPCs): ${sheets.map(s => s.characterName).join(', ')}`;
+      }
+    } catch { /* non-critical */ }
+
     const result = await callAi(toProviderConfig(settings), [
       {
         role: 'system',
-        content: `Extract named entities from this D&D session note. Categorize each as: NPC, Location, Quest, Faction, Item, or Rumor. For each entity provide: name, type, a brief summary (1-2 sentences), and confidence (high/medium/low). Return ONLY a JSON array, no markdown fences. Example: [{"name":"Gandalf","type":"NPC","summary":"A wise wizard","confidence":"high"}]`,
+        content: `Extract named entities from this D&D session note. Categorize each as: Player Character, NPC, Location, Quest, Faction, Item, or Rumor.
+
+IMPORTANT: If a person listed in PARTY MEMBERS is mentioned in the note, categorize them as "Player Character", NOT "NPC". Any other person is an NPC.
+
+For each entity provide: name, type, a brief summary (1-2 sentences), and confidence (high/medium/low). Return ONLY a JSON array, no markdown fences. Example: [{"name":"Gandalf","type":"NPC","summary":"A wise wizard","confidence":"high"}]`,
       },
-      { role: 'user', content: noteRow.note.body },
+      { role: 'user', content: noteRow.note.body + partyHint },
     ], { maxTokens: 2048, temperature: 0.2 });
 
     let entities: ExtractedEntity[];
@@ -91,7 +110,7 @@ export async function extractEntities(noteId: string, tableId: string, userId: s
 
     if (!Array.isArray(entities)) throw new Error('AI response is not an array');
 
-    const validTypes = ['NPC', 'Location', 'Quest', 'Faction', 'Item', 'Rumor'];
+    const validTypes = ['NPC', 'Location', 'Quest', 'Faction', 'Item', 'Rumor', 'Player Character'];
     const confidenceMap: Record<string, number> = { high: 0.9, medium: 0.5, low: 0.1 };
     const inserted = [];
     for (const e of entities) {

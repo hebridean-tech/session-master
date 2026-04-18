@@ -141,6 +141,7 @@
   };
 
   const entityTypeBadge: Record<string, string> = {
+    'Player Character': 'bg-emerald-900/50 text-emerald-300',
     NPC: 'bg-blue-900/50 text-blue-300',
     Location: 'bg-green-900/50 text-green-300',
     Quest: 'bg-amber-900/50 text-amber-300',
