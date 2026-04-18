@@ -20,6 +20,8 @@
   let stealthHit = $state<any>(null);
   let stealthTarget = $state('');
   let stealthTransferring = $state(false);
+  let stealthPctRoll = $state(0);
+  let stealthPctRolled = $state(false);
   const partyMembers = $derived(data?.characters || []);
 
   // Active tab
@@ -78,13 +80,27 @@
     stealthRolled = true;
     stealthHit = null;
     stealthTarget = '';
+    stealthPctRolled = false;
+    stealthPctRoll = 0;
     const hit = stealthItems.find(i => stealthRoll >= i.rangeStart && stealthRoll <= i.rangeEnd);
     if (hit) {
       stealthHit = hit;
-      stealthNarration = `Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — ${hit.currencyType ? '💰 ' + hit.quantity + ' ' + hit.name + '' : hit.name + ''}${hit.magic ? ' (MAGIC ITEM)' : ''} held by ${hit.characterName}!`;
+      if (hit.currencyType) {
+        stealthNarration = `Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — 💰 ${hit.quantity} ${hit.name} held by ${hit.characterName}! Roll percentile to determine how much is stolen.`;
+      } else {
+        stealthNarration = `Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — ${hit.name}${hit.magic ? ' (MAGIC ITEM)' : ''} held by ${hit.characterName}!`;
+      }
     } else {
       stealthNarration = `Rolled ${stealthRoll}: Miss — nothing was targeted.`;
     }
+  }
+
+  function rollStealthPct() {
+    stealthPctRoll = Math.floor(Math.random() * 100) + 1;
+    stealthPctRolled = true;
+    const stolenQty = Math.max(1, Math.ceil(stealthHit.quantity * stealthPctRoll / 100));
+    stealthHit = { ...stealthHit, quantity: stolenQty };
+    stealthNarration = `Rolled ${stealthRoll}: Hit 💰 currency. Percentile: ${stealthPctRoll}% — stole ${stolenQty} of ${stealthItems.find(i => i.name === stealthHit.name && i.characterName === stealthHit.characterName)?.quantity} ${stealthHit.name} from ${stealthHit.characterName}!`;
   }
 
   async function confirmStealthTransfer() {
@@ -277,9 +293,23 @@
             </div>
           {/if}
 
-          {#if stealthHit}
+          {#if stealthHit && stealthHit.currencyType && !stealthPctRolled}
+            <div class="mt-3 p-3 rounded-lg bg-amber-950/30 border border-amber-900/50">
+              <p class="text-amber-300 text-sm font-medium mb-2">💰 Currency hit! Roll percentile to determine how much is stolen.</p>
+              <button
+                onclick={rollStealthPct}
+                class="px-5 py-3 bg-amber-900/50 hover:bg-amber-900/70 text-amber-200 rounded-lg text-sm font-medium min-h-[44px]"
+              >
+                🎲 Roll d100 (percentile)
+              </button>
+              {#if stealthPctRolled}
+                <p class="text-amber-200 text-sm mt-2">Rolled {stealthPctRoll}% — stole {stealthHit.quantity} {stealthHit.name}</p>
+              {/if}
+            </div>
+          {/if}
+          {#if stealthHit && (stealthHit.currencyType ? stealthPctRolled : true)}
             <div class="mt-3 p-3 rounded-lg bg-red-950/30 border border-red-900/50">
-              <p class="text-red-300 text-sm font-medium mb-2">🔪 Steal: {stealthHit.name} from {stealthHit.characterName}?</p>
+              <p class="text-red-300 text-sm font-medium mb-2">🔪 Steal: {stealthHit.quantity} {stealthHit.name} from {stealthHit.characterName}?</p>
               <div class="flex flex-col sm:flex-row gap-2 items-start">
                 <select
                   bind:value={stealthTarget}
