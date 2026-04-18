@@ -115,6 +115,22 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
       });
     }
 
+    // Update spell slots
+    if (data.spellSlots && Array.isArray(data.spellSlots)) {
+      const { spellSlots } = await import('$lib/db/schema');
+      await db.delete(spellSlots).where(eq(spellSlots.characterSheetId, characterId));
+      for (const slot of data.spellSlots) {
+        if (slot.level && slot.max > 0) {
+          await db.insert(spellSlots).values({
+            characterSheetId: characterId,
+            level: slot.level,
+            current: slot.max,
+            max: slot.max,
+          });
+        }
+      }
+    }
+
     return json({ success: true });
   } catch (e: any) {
     console.error('[update character]', e);

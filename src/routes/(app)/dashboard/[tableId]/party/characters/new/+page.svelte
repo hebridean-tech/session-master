@@ -44,6 +44,7 @@
   let pendingInventory = $state<any[]>([]);
   let pendingCurrency = $state<any>({});
   let pendingClasses = $state<any[]>([]);
+  let pendingSpellSlots = $state<any[]>([]);
 
   function fillFromParsed(p: Record<string, any>) {
     characterName = p.characterName || '';
@@ -84,6 +85,7 @@
     pendingSpells = p.spells || [];
     pendingInventory = p.inventory || [];
     pendingCurrency = p.currency || {};
+    pendingSpellSlots = p.spellSlots || [];
     mode = 'manual';
   }
 
@@ -182,6 +184,7 @@
         <input type="hidden" name="pendingInventory" value={JSON.stringify(pendingInventory)} />
         <input type="hidden" name="pendingCurrency" value={JSON.stringify(pendingCurrency)} />
         <input type="hidden" name="pendingClasses" value={JSON.stringify(pendingClasses)} />
+        <input type="hidden" name="pendingSpellSlots" value={JSON.stringify(pendingSpellSlots)} />
 
         <!-- Basic Info -->
         <div>

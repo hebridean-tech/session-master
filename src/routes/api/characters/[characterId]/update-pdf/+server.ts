@@ -122,7 +122,10 @@ Return ONLY a JSON object with ALL of these fields (use null for anything not fo
   "backstory": string or null,
   "spells": [{ "name": string, "level": number, "school": string or null, "prepared": boolean, "source": string }],
   "inventory": [{ "name": string, "quantity": number, "weight": number, "notes": string or null, "isMagic": boolean }],
-  "currency": { "cp": number, "sp": number, "ep": number, "gp": number, "pp": number }
+  "currency": { "cp": number, "sp": number, "ep": number, "gp": number, "pp": number },
+  "spellSlots": [
+    { "level": number (1-9), "max": number (total slots for this spell level) }
+  ]
 }
 Return ONLY the JSON, no markdown fences or explanation.`,
         },

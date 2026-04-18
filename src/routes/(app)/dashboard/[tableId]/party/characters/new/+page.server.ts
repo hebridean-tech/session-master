@@ -45,6 +45,7 @@ export const actions: Actions = {
     let pendingSpells: any[] = [];
     let pendingInventory: any[] = [];
     let pendingCurrency: any = {};
+    let pendingSpellSlots: any[] = [];
     let pendingClasses: any[] = [];
     try {
       const sp = form.get('pendingSpells') as string;
@@ -61,6 +62,10 @@ export const actions: Actions = {
     try {
       const cl = form.get('pendingClasses') as string;
       if (cl) pendingClasses = JSON.parse(cl);
+    } catch {}
+    try {
+      const ss = form.get('pendingSpellSlots') as string;
+      if (ss) pendingSpellSlots = JSON.parse(ss);
     } catch {}
 
     const sheet = await createCharacterSheet({
@@ -146,6 +151,22 @@ export const actions: Actions = {
             pp: pendingCurrency.pp || 0,
           },
         });
+      }
+
+      // Create spell slots if provided
+      if (pendingSpellSlots.length > 0) {
+        const { spellSlots } = await import('$lib/db/schema');
+        const { eq } = await import('drizzle-orm');
+        for (const slot of pendingSpellSlots) {
+          if (slot.level && slot.max > 0) {
+            await db.insert(spellSlots).values({
+              characterSheetId: sheet.id,
+              level: slot.level,
+              current: slot.max,
+              max: slot.max,
+            });
+          }
+        }
       }
     }
 
