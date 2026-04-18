@@ -27,10 +27,27 @@
   let hpRolling = $state(false);
   let hpIncrease = $state(0);
 
-  // Step 3: ASI
-  let asiMode = $state<'stats' | 'feat' | null>(null);
-  let asiStats = $state<Record<string, number>>({});
-  let featName = $state('');
+  // AI feat suggestions
+  let featSuggestions = $state<any[]>([]);
+  let featSuggesting = $state(false);
+  let featSuggestError = $state('');
+
+  async function suggestFeats() {
+    featSuggesting = true;
+    featSuggestError = '';
+    try {
+      const resp = await fetch('/api/characters/suggest-feats', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterSheetId: characterId, tableId }),
+      });
+      const d = await resp.json();
+      if (d.error) { featSuggestError = d.error; }
+      else { featSuggestions = d.feats || []; }
+    } catch (e: any) { featSuggestError = e.message; }
+    featSuggesting = false;
+  }
+
+  function selectFeat(name: string) { featName = name; }
 
   // Step 4: Spell Slots
   let spellSlotsConfirmed = $state(false);
@@ -452,6 +469,30 @@
             <input type="text" bind:value={featName} placeholder="e.g., Sharpshooter"
               class="w-full bg-stone-800 border border-stone-700 text-stone-200 rounded-lg px-4 py-2 text-sm
                 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30" />
+            <button onclick={suggestFeats} disabled={featSuggesting}
+              class="mt-3 w-full px-4 py-2.5 bg-purple-900/30 hover:bg-purple-900/50 border border-purple-700/40 text-purple-300 rounded-lg text-sm font-medium transition-colors disabled:opacity-50"
+            >
+              {featSuggesting ? '✨ Thinking...' : '✨ AI Suggest Feats'}
+            </button>
+            {#if featSuggestError}
+              <p class="text-red-400 text-xs mt-2">{featSuggestError}</p>
+            {/if}
+            {#if featSuggestions.length > 0}
+              <div class="mt-3 space-y-2">
+                {#each featSuggestions as feat}
+                  <button type="button" onclick={() => selectFeat(feat.name)}
+                    class="w-full text-left bg-stone-800/80 border border-stone-700 rounded-lg p-3 hover:border-amber-600 transition-colors {featName === feat.name ? 'border-amber-500 bg-amber-950/20' : ''}">
+                    <div class="flex items-center justify-between">
+                      <span class="text-stone-100 font-medium text-sm">{feat.name}</span>
+                      {#if feat.stat}
+                        <span class="text-xs text-stone-500">{feat.stat}</span>
+                      {/if}
+                    </div>
+                    <p class="text-stone-400 text-xs mt-1">{feat.reason}</p>
+                  </button>
+                {/each}
+              </div>
+            {/if}
           {/if}
         </div>
 
