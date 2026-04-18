@@ -57,11 +57,22 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
     .innerJoin(user, eq(characterSheets.userId, user.id))
     .where(eq(characterSheets.tableId, tableId));
 
-  const charList = characters.map(c => c.name).join(', ');
+  // Build author → character mapping
+  const authorCharMap: Record<string, string[]> = {};
+  for (const c of characters) {
+    const key = c.ownerName || c.ownerEmail;
+    if (!authorCharMap[key]) authorCharMap[key] = [];
+    authorCharMap[key].push(c.name);
+  }
 
-  const notesText = notes.map((n, i) =>
-    `--- Note by ${n.authorName || n.authorEmail} ---\n${n.note.body}`
-  ).join('\n\n');
+  const charList = characters.map(c => `${c.name} (played by ${c.ownerName || c.ownerEmail})`).join(', ');
+
+  const notesText = notes.map((n) => {
+    const author = n.authorName || n.authorEmail;
+    const chars = authorCharMap[author] || [];
+    const charNote = chars.length > 0 ? ` [plays: ${chars.join(', ')}]` : ' [no character found]';
+    return `--- Note by ${author}${charNote} ---\n${n.note.body}`;
+  }).join('\n\n');
 
   const result = await callAi(toProviderConfig(settings), [
     {
@@ -75,9 +86,15 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
 
 PARTY MEMBERS: ${charList}
 
-IMPORTANT RULES:
+PRONOUN RESOLUTION RULES:
+- Each note header shows who wrote it and which character(s) they play.
+- When a player writes "I", "me", "my", they mean THEIR CHARACTER, not themselves as a person.
+- Example: If the header says "[plays: Elara]" and the body says "I picked up the longsword", the longsword goes to Elara.
+- When a player writes "we", it refers to the whole party — try to determine who received what from other notes.
+- When a player uses a character name (e.g. "Slinky grabbed the gold"), attribute to that named character.
+
+LOOT EXTRACTION RULES:
 - Match item recipients to character names from the party list above
-- If a player mentions "I got X" or "we found X", attribute to that player's character
 - Cross-reference between notes — if one player says "we found 200gp" and another says "I took the gold", attribute correctly
 - Include quantities for everything
 - If money was split, note how much each person got
