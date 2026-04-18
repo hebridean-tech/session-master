@@ -123,11 +123,11 @@
   const skillAbility: Record<string,string> = { Acrobatics:'dex', 'Animal Handling':'wis', Arcana:'int', Athletics:'str', Deception:'cha', History:'int', Insight:'wis', Intimidation:'cha', Investigation:'int', Medicine:'wis', Nature:'int', Perception:'wis', Performance:'cha', Persuasion:'cha', Religion:'int', 'Sleight of Hand':'dex', Stealth:'dex', Survival:'wis' };
 </script>
 
-<div class="p-4 md:p-8 min-h-screen bg-stone-950">
+<div class="p-3 sm:p-4 md:p-8 min-h-screen bg-stone-950">
   <div class="max-w-4xl mx-auto">
 
     <!-- Header -->
-    <div class="flex items-start justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-6">
       <div>
         <h1 class="text-2xl md:text-3xl font-bold text-stone-100">{s.characterName}</h1>
         <p class="text-amber-500 text-sm mt-1">
@@ -173,24 +173,24 @@
     {/if}
 
     <!-- Action Buttons -->
-    <div class="flex gap-2 mb-4">
+    <div class="flex flex-col sm:flex-row gap-2 mb-4">
       {#if canEdit && s.level != null && s.level < 20}
         <a href="/dashboard/{tableId}/party/characters/{sheetId}/level-up"
-          class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition-colors">
+          class="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition-colors min-h-[44px]">
           ⬆️ Level Up
         </a>
       {/if}
       <a href="/dashboard/{tableId}/party/characters/{sheetId}/combat"
-        class="inline-flex items-center gap-2 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-sm font-medium transition-colors">
+        class="inline-flex items-center justify-center gap-2 px-4 py-3 sm:py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-sm font-medium transition-colors min-h-[44px]">
         ⚔️ Combat
       </a>
     </div>
 
     <!-- Tab Bar -->
-    <div class="flex gap-1 mb-6 border-b border-stone-800 overflow-x-auto">
+    <div class="flex gap-1 mb-6 border-b border-stone-800 overflow-x-auto -mx-3 sm:mx-0 px-3 sm:px-0 scrollbar-none">
       {#each tabs as t}
         <button onclick={() => activeTab = t}
-          class="px-4 py-2 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px
+          class="px-3 sm:px-4 py-2.5 text-sm font-medium whitespace-nowrap transition-colors border-b-2 -mb-px min-h-[44px] flex items-center
             {activeTab === t ? 'text-amber-500 border-amber-500' : 'text-stone-500 border-transparent hover:text-stone-300'}">
           {tabLabels[t]}
         </button>

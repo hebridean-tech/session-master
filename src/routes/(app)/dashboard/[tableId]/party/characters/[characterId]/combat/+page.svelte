@@ -140,23 +140,23 @@
 {:else if character}
   <div class="space-y-4">
     <!-- Header -->
-    <div class="flex items-center justify-between flex-wrap gap-2">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
       <div>
-        <h1 class="text-2xl font-bold text-stone-100">{character.name}</h1>
-        <p class="text-stone-400">Level {character.level} {character.class}{character.subclass ? ` (${character.subclass})` : ''}</p>
+        <h1 class="text-xl sm:text-2xl font-bold text-stone-100">{character.name}</h1>
+        <p class="text-stone-400 text-sm">Level {character.level} {character.class}{character.subclass ? ` (${character.subclass})` : ''}</p>
       </div>
       <div class="flex gap-2">
-        <button onclick={() => resetRest('short_rest')} class="px-3 py-1.5 bg-amber-700/30 hover:bg-amber-700/50 text-amber-300 rounded text-sm font-medium border border-amber-700/40">
+        <button onclick={() => resetRest('short_rest')} class="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 bg-amber-700/30 hover:bg-amber-700/50 text-amber-300 rounded-lg text-sm font-medium border border-amber-700/40">
           ⏸ Short Rest
         </button>
-        <button onclick={() => resetRest('long_rest')} class="px-3 py-1.5 bg-emerald-700/30 hover:bg-emerald-700/50 text-emerald-300 rounded text-sm font-medium border border-emerald-700/40">
+        <button onclick={() => resetRest('long_rest')} class="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 bg-emerald-700/30 hover:bg-emerald-700/50 text-emerald-300 rounded-lg text-sm font-medium border border-emerald-700/40">
           🌙 Long Rest
         </button>
       </div>
     </div>
 
     <!-- Stats bar -->
-    <div class="flex flex-wrap gap-4 text-sm">
+    <div class="flex flex-wrap gap-x-4 gap-y-2 text-sm">
       <span class="text-stone-200">HP: <span class="text-red-400 font-bold">{character.hpCurrent}/{character.hpMax}</span></span>
       <span class="text-stone-200">AC: <span class="text-amber-400 font-bold">{character.ac ?? '—'}</span></span>
       <span class="text-stone-200">Speed: <span class="text-stone-300">{character.speed ?? '—'} ft</span></span>
@@ -169,9 +169,10 @@
       {#each ['action', 'bonus_action', 'reaction', 'free'] as col}
         <div class="bg-stone-800/50 rounded-lg border border-stone-700/50 p-3">
           <h2 class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-2">{ACTION_LABELS[col]}</h2>
-          <div class="space-y-1.5">
+          <div class="space-y-2">
             {#each actionGroups()[col] || [] as item (item.id)}
               <div class="group relative">
+                <div class="min-h-[44px] flex items-center">
                 {#if item._type === 'spell'}
                   <div class="text-left w-full text-sm text-stone-200">
                     <span class="text-purple-400" title="Spell (L{item.level ?? 0})">✨</span>
@@ -179,7 +180,7 @@
                     <span class="text-stone-500 text-[10px]">L{item.level ?? 0}{item.castingTime ? ' · ' + item.castingTime : ''}</span>
                   </div>
                 {:else}
-                  <button onclick={() => editingFeature = item.id} class="text-left w-full text-sm text-stone-200 hover:text-amber-400 transition-colors" title="Click to edit">
+                  <button onclick={() => editingFeature = item.id} class="text-left w-full text-sm text-stone-200 hover:text-amber-400 transition-colors min-h-[44px] flex items-center" title="Click to edit">
                     {item.name}
                     {#if item.damage}
                       <span class="text-red-400 ml-1">({item.damage})</span>
@@ -196,6 +197,7 @@
                     </div>
                   {/if}
                 {/if}
+                </div>
               </div>
             {/each}
             {#if (actionGroups()[col] || []).length === 0}
@@ -244,9 +246,9 @@
             <div class="flex items-center justify-between bg-stone-900/50 rounded px-3 py-2">
               <span class="text-sm text-stone-200">{r.name}</span>
               <div class="flex items-center gap-2">
-                <button onclick={() => adjustResource(r.id, -1)} class="w-6 h-6 flex items-center justify-center rounded bg-stone-700 hover:bg-stone-600 text-stone-300 text-xs font-bold">−</button>
+                <button onclick={() => adjustResource(r.id, -1)} class="w-10 h-10 flex items-center justify-center rounded bg-stone-700 hover:bg-stone-600 text-stone-300 text-sm font-bold min-w-[44px] min-h-[44px]">−</button>
                 <span class="text-sm font-mono text-stone-100">{r.current}<span class="text-stone-500">/{r.max}</span></span>
-                <button onclick={() => adjustResource(r.id, 1)} class="w-6 h-6 flex items-center justify-center rounded bg-stone-700 hover:bg-stone-600 text-stone-300 text-xs font-bold">+</button>
+                <button onclick={() => adjustResource(r.id, 1)} class="w-10 h-10 flex items-center justify-center rounded bg-stone-700 hover:bg-stone-600 text-stone-300 text-sm font-bold min-w-[44px] min-h-[44px]">+</button>
               </div>
             </div>
           {/each}
@@ -267,7 +269,7 @@
       </div>
 
       {#if showAddAttack}
-        <div class="bg-stone-900/50 rounded p-3 mb-3 grid grid-cols-2 sm:grid-cols-4 gap-2">
+        <div class="bg-stone-900/50 rounded p-3 mb-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
           <input bind:value={newAttack.name} placeholder="Name" class="bg-stone-900 text-stone-200 text-sm rounded px-2 py-1 border border-stone-600 col-span-2 sm:col-span-1" />
           <input type="number" bind:value={newAttack.attackBonus} placeholder="+hit" class="bg-stone-900 text-stone-200 text-sm rounded px-2 py-1 border border-stone-600" />
           <input bind:value={newAttack.damage} placeholder="1d8+4" class="bg-stone-900 text-stone-200 text-sm rounded px-2 py-1 border border-stone-600" />
@@ -281,9 +283,9 @@
             <option value="thrown">Thrown</option><option value="reach">Reach</option>
           </select>
           <input bind:value={newAttack.rangeFt} placeholder="Range ft" class="bg-stone-900 text-stone-200 text-sm rounded px-2 py-1 border border-stone-600" />
-          <div class="flex gap-1 col-span-2 sm:col-span-1">
-            <button onclick={addAttack} class="flex-1 bg-amber-700 hover:bg-amber-600 text-stone-100 rounded px-2 py-1 text-sm">Add</button>
-            <button onclick={() => showAddAttack = false} class="bg-stone-700 hover:bg-stone-600 text-stone-300 rounded px-2 py-1 text-sm">Cancel</button>
+          <div class="flex gap-2 col-span-1 sm:col-span-2">
+            <button onclick={addAttack} class="flex-1 min-h-[44px] bg-amber-700 hover:bg-amber-600 text-stone-100 rounded px-3 py-2 text-sm font-medium">Add</button>
+            <button onclick={() => showAddAttack = false} class="min-h-[44px] bg-stone-700 hover:bg-stone-600 text-stone-300 rounded px-3 py-2 text-sm font-medium">Cancel</button>
           </div>
         </div>
       {/if}
@@ -310,7 +312,7 @@
                 <span class="text-stone-500 ml-1">(2h: {atk.versatileDamage})</span>
               {/if}
             </div>
-            <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div class="flex gap-1 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
               <button onclick={() => deleteAttack(atk.id)} class="text-red-400 hover:text-red-300 text-xs p-1" title="Delete">🗑️</button>
             </div>
           </div>

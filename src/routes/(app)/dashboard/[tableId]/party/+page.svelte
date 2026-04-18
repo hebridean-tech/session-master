@@ -18,12 +18,12 @@
   }
 </script>
 
-<div class="p-8">
+<div class="p-4 sm:p-8">
   <div class="max-w-2xl mx-auto">
     <div class="flex items-center justify-between mb-6">
       <h1 class="text-xl font-bold text-stone-100">Party</h1>
       <a href="/dashboard/{data?.table.id}/party/characters/new"
-        class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded">
+        class="px-3 py-2.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded min-h-[44px] flex items-center">
         + New Character
       </a>
     </div>

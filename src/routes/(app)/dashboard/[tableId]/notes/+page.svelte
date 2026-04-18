@@ -53,9 +53,9 @@
   const safe_aiSettings = $derived(data?.aiSettings);
 </script>
 
-<div class="p-8">
+<div class="p-4 sm:p-8">
   <div class="max-w-2xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
       <h1 class="text-xl font-bold text-stone-100">Session Notes</h1>
       <div class="flex gap-2">
         {#if data?.role === 'dm' && safe_aiSettings && safe_aiSettings.permissionLevel >= 1}
@@ -80,20 +80,20 @@
     </div>
 
     <!-- Filters -->
-    <div class="flex gap-3 mb-6 flex-wrap">
-      <select bind:value={filterAuthor} class="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded px-3 py-2">
+    <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mb-6">
+      <select bind:value={filterAuthor} class="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded px-3 py-3 min-h-[44px]">
         <option value="">All authors</option>
         {#each safe_members as { user } (user.id)}
           <option value={user.id}>{user.name || user.email}</option>
         {/each}
       </select>
-      <select bind:value={filterLabel} class="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded px-3 py-2">
+      <select bind:value={filterLabel} class="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded px-3 py-3 min-h-[44px]">
         <option value="">All sessions</option>
         {#each safe_labels as label}
           <option value={label}>{label}</option>
         {/each}
       </select>
-      <select bind:value={filterSource} class="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded px-3 py-2">
+      <select bind:value={filterSource} class="bg-stone-800 border border-stone-700 text-stone-300 text-sm rounded px-3 py-3 min-h-[44px]">
         <option value="">All types</option>
         <option value="upload">Uploaded</option>
         <option value="in_app">Written in-app</option>

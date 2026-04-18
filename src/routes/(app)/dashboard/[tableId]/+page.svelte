@@ -25,14 +25,14 @@
   }
 </script>
 
-<div class="p-8">
+<div class="p-4 sm:p-8">
   <div class="max-w-3xl mx-auto">
     <h1 class="text-2xl font-bold text-stone-100 mb-2">{tableName}</h1>
     <p class="text-stone-500 text-sm mb-8">
       {isDm ? '⚔️ Dungeon Master' : '🗡️ Player'} · {safe_members.length} members
     </p>
 
-    <div class="grid grid-cols-3 gap-4 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8">
       <div class="bg-stone-900 border border-stone-800 rounded-lg p-5">
         <h3 class="text-sm font-medium text-stone-400">{isDm ? 'Pending Review' : 'Active Requests'}</h3>
         <p class="text-3xl font-bold text-stone-100 mt-1">{safe_pendingCount}</p>
