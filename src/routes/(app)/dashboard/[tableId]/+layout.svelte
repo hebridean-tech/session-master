@@ -19,6 +19,7 @@
 
   const dmNavItems = [
     { href: `/dashboard/${tid}/dm/queue`, label: 'DM Queue', icon: '📨' },
+    { href: `/dashboard/${tid}/dm/intel`, label: 'DM Intel', icon: '🔍' },
     { href: `/dashboard/${tid}/dm/ai-settings`, label: 'AI Settings', icon: '🤖' },
     { href: `/dashboard/${tid}/dm/ai-jobs`, label: 'AI Jobs', icon: '⚡' },
     { href: `/dashboard/${tid}/dm/loot`, label: 'Loot & Shops', icon: '🗝️' },
