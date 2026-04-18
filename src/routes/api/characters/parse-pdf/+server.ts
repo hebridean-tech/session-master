@@ -6,6 +6,7 @@ import { callAi, type AiProviderConfig } from '$lib/ai/provider';
 function toProviderConfig(settings: NonNullable<Awaited<ReturnType<typeof getAiSettings>>>): AiProviderConfig {
   return {
     providerType: settings.providerType as AiProviderConfig['providerType'],
+    hostedProvider: settings.hostedProvider || null,
     endpointUrl: settings.endpointUrl,
     modelName: settings.modelName,
     apiKey: settings.apiKeyRef || null,

@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
-import { callAi } from '$lib/ai/provider';
+import { callAi, type AiProviderConfig } from '$lib/ai/provider';
 
 export const POST: RequestHandler = async ({ request, locals }) => {
   if (!locals.session?.user?.id) return json({ error: 'Unauthorized' }, { status: 401 });
@@ -13,8 +13,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const aiConfig = await getAiSettings(tableId);
   if (!aiConfig) return json({ error: 'No AI configured for this table' }, { status: 400 });
 
-  const providerConfig = {
-    providerType: (aiConfig.providerType as any) || 'hosted_api',
+  const providerConfig: AiProviderConfig = {
+    providerType: (aiConfig.providerType as AiProviderConfig['providerType']) || 'hosted_api',
+    hostedProvider: aiConfig.hostedProvider || null,
     endpointUrl: aiConfig.endpointUrl,
     modelName: aiConfig.modelName,
     apiKey: (aiConfig as any).apiKey ?? (aiConfig as any).apiKeyRef ?? null,

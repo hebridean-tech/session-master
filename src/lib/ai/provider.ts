@@ -12,6 +12,7 @@ export interface AiResponse {
 
 export interface AiProviderConfig {
   providerType: 'hosted_api' | 'lm_studio' | 'ollama';
+  hostedProvider?: string | null;
   endpointUrl: string | null;
   modelName: string | null;
   apiKey: string | null;
@@ -23,8 +24,20 @@ const DEFAULT_ENDPOINTS: Record<string, string> = {
   ollama: 'http://localhost:11434',
 };
 
+const HOSTED_PROVIDER_ENDPOINTS: Record<string, string> = {
+  openai: 'https://api.openai.com/v1',
+  zai: 'https://api.z.ai/api/coding/paas/v4',
+  anthropic: 'https://api.anthropic.com/v1',
+  google: 'https://generativelanguage.googleapis.com/v1',
+};
+
 function getEndpoint(config: AiProviderConfig): string {
-  let url = config.endpointUrl || DEFAULT_ENDPOINTS[config.providerType] || DEFAULT_ENDPOINTS.hosted_api;
+  let url = config.endpointUrl || null;
+  // Resolve hosted provider to default endpoint if no custom URL
+  if (!url && config.providerType === 'hosted_api' && config.hostedProvider && HOSTED_PROVIDER_ENDPOINTS[config.hostedProvider]) {
+    url = HOSTED_PROVIDER_ENDPOINTS[config.hostedProvider];
+  }
+  url = url || DEFAULT_ENDPOINTS[config.providerType] || DEFAULT_ENDPOINTS.hosted_api;
   url = url.replace(/\/+$/, '');
   // Ensure LM Studio endpoints always include /v1
   if (config.providerType === 'lm_studio' && !url.endsWith('/v1')) url += '/v1';
