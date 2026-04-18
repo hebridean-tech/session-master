@@ -12,6 +12,12 @@
   let error = $state('');
   let committing = $state(false);
 
+  // Step 0: Class selection
+  let classSelectionMode = $state<'existing' | 'new' | null>(null);
+  let selectedClassEntryId = $state<string | null>(null);
+  let newClassName = $state('');
+  let newSubclass = $state('');
+
   // API response data
   let levelData: any = $state(null);
 
@@ -83,6 +89,7 @@
   // Step computation
   const steps = $derived(() => {
     const s: { id: string; label: string; show: boolean }[] = [
+      { id: 'class', label: 'Class', show: levelData?.hasClassEntries || true },
       { id: 'confirm', label: 'Confirm', show: true },
       { id: 'hp', label: 'Hit Points', show: true },
       { id: 'asi', label: 'ASI / Feat', show: levelData?.hasAsi },
@@ -99,7 +106,8 @@
   function canProceed(): boolean {
     const current = visibleSteps[step];
     if (!current) return false;
-    if (current.id === 'hp') return hpChoice !== null;
+    if (current.id === 'class') return classSelectionMode !== null;
+    if (current.id === 'confirm') return hpChoice !== null;
     if (current.id === 'asi' && levelData?.hasAsi) {
       if (asiMode === 'stats') {
         const total = Object.values(asiStats).reduce((a: number, b: number) => a + b, 0);
@@ -135,6 +143,23 @@
     return (levelData?.abilityScores[stat] || 10) + (asiStats[stat] || 0);
   }
 
+  const HIT_DIE: Record<string, number> = {
+    artificer: 8, bard: 8, cleric: 8, druid: 8, monk: 8, rogue: 8, warlock: 8,
+    fighter: 10, paladin: 10, ranger: 10,
+    barbarian: 12, bloodhunter: 12,
+    sorcerer: 6, wizard: 6,
+  };
+  function getCasterTypeSimple(name: string, sub: string | null): string | null {
+    const c = name.toLowerCase(); const s = (sub || '').toLowerCase();
+    if (c === 'fighter' && s.includes('eldritch knight')) return 'third';
+    if (c === 'rogue' && s.includes('arcane trickster')) return 'third';
+    if (c === 'fighter' || c === 'rogue') return null;
+    if (['bard','cleric','druid','sorcerer','wizard','artificer'].includes(c)) return 'full';
+    if (['paladin','ranger'].includes(c)) return 'half';
+    if (c === 'warlock') return 'warlock';
+    return null;
+  }
+
   async function commit() {
     committing = true;
     error = '';
@@ -146,6 +171,11 @@
 
       const body: any = {
         characterSheetId: characterId,
+        classEntryId: selectedClassEntryId || undefined,
+        newClassName: classSelectionMode === 'new' ? newClassName : undefined,
+        newSubclass: classSelectionMode === 'new' ? (newSubclass || null) : undefined,
+        newHitDie: classSelectionMode === 'new' ? (HIT_DIE[newClassName.toLowerCase()] || 8) : undefined,
+        newCasterType: classSelectionMode === 'new' ? getCasterTypeSimple(newClassName, newSubclass || null) : undefined,
         hpIncrease,
         abilityScoreImprovements: asiMode === 'stats' && Object.keys(asiStats).length > 0 ? asiStats : undefined,
         newSpellSlots: levelData?.spellcaster ? levelData.newSpellSlots : undefined,
@@ -219,7 +249,68 @@
         <div class="bg-red-950/30 border border-red-800 rounded-lg p-4 text-red-300 mb-4">{error}</div>
       {/if}
 
-      {#if visibleSteps[step]?.id === 'confirm'}
+      {#if visibleSteps[step]?.id === 'class'}
+        <div class="bg-stone-900 border border-stone-800 rounded-lg p-6">
+          <h2 class="text-lg font-semibold text-amber-400 mb-2">Choose Class to Level Up</h2>
+          <p class="text-stone-400 text-sm mb-6">Which class gains this level?</p>
+
+          {#if levelData.classEntries?.length > 0}
+            <div class="space-y-2 mb-6">
+              {#each levelData.classEntries as entry}
+                <button onclick={() => { classSelectionMode = 'existing'; selectedClassEntryId = entry.id; }}
+                  class="w-full p-4 rounded-lg border-2 text-left transition-all
+                    {classSelectionMode === 'existing' && selectedClassEntryId === entry.id
+                      ? 'border-amber-500 bg-amber-950/20'
+                      : 'border-stone-700 bg-stone-800 hover:border-stone-600'}">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="text-stone-200 font-medium">{entry.className}{entry.subclass ? ` (${entry.subclass})` : ''}</p>
+                      <p class="text-stone-500 text-xs">Level {entry.classLevel} → Level {entry.classLevel + 1}</p>
+                    </div>
+                    {#if entry.isPrimary}
+                      <span class="text-xs px-2 py-0.5 rounded bg-amber-900/40 text-amber-400">Primary</span>
+                    {/if}
+                  </div>
+                </button>
+              {/each}
+            </div>
+          {/if}
+
+          <div class="border-t border-stone-800 pt-4">
+            <button onclick={() => classSelectionMode = 'new'}
+              class="w-full p-4 rounded-lg border-2 border-dashed transition-all text-left
+                {classSelectionMode === 'new'
+                  ? 'border-amber-500 bg-amber-950/20'
+                  : 'border-stone-700 bg-stone-800/50 hover:border-stone-600'}">
+              <p class="text-stone-200 font-medium">+ Add New Class</p>
+              <p class="text-stone-500 text-xs">Start at level 1 in a new class</p>
+            </button>
+
+            {#if classSelectionMode === 'new'}
+              <div class="mt-4 space-y-3">
+                <div>
+                  <label class="block text-sm text-stone-400 mb-1">Class Name</label>
+                  <input type="text" bind:value={newClassName} placeholder="e.g., Rogue"
+                    class="w-full bg-stone-800 border border-stone-700 text-stone-200 rounded-lg px-4 py-2 text-sm
+                      focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30" />
+                </div>
+                <div>
+                  <label class="block text-sm text-stone-400 mb-1">Subclass (optional)</label>
+                  <input type="text" bind:value={newSubclass} placeholder="e.g., Thief"
+                    class="w-full bg-stone-800 border border-stone-700 text-stone-200 rounded-lg px-4 py-2 text-sm
+                      focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500/30" />
+                </div>
+                {#if newClassName}
+                  <p class="text-stone-500 text-xs">
+                    Hit Die: d{HIT_DIE[newClassName.toLowerCase()] || 8} · Caster: {getCasterTypeSimple(newClassName, newSubclass || null) || 'None'}
+                  </p>
+                {/if}
+              </div>
+            {/if}
+          </div>
+        </div>
+
+      {:else if visibleSteps[step]?.id === 'confirm'}
         <div class="bg-stone-900 border border-stone-800 rounded-lg p-6">
           <h2 class="text-lg font-semibold text-amber-400 mb-4">Level Up Confirmation</h2>
           <div class="space-y-3">

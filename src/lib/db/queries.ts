@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { tables, tableMembers, user, characterSheets, downtimeRequests, requestComments, diceRolls, downtimeTimeWindows, requestTimeAllocations, activityLog, sessionNotes, noteFiles, aiSettings, aiJobs, extractedEntities, inventoryItems, inventoryChangeSuggestions, characterCurrency, characterSpells, spellSlots, dmPlans, lootEntries, session, account, verification } from './schema';
+import { tables, tableMembers, user, characterSheets, downtimeRequests, requestComments, diceRolls, downtimeTimeWindows, requestTimeAllocations, activityLog, sessionNotes, noteFiles, aiSettings, aiJobs, extractedEntities, inventoryItems, inventoryChangeSuggestions, characterCurrency, characterSpells, spellSlots, dmPlans, lootEntries, session, account, verification, characterClassFeatures, characterAttacks, combatResources } from './schema';
 import { eq, and, desc, sum, sql, like, gte, lte, count as countFn } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -194,6 +194,9 @@ export async function deleteCharacterSheet(id: string) {
   try { await db.delete(characterCurrency).where(eq(characterCurrency.characterSheetId, id)); } catch {}
   try { await db.delete(downtimeRequests).where(eq(downtimeRequests.characterSheetId, id)); } catch {}
   try { await db.delete(inventoryChangeSuggestions).where(eq(inventoryChangeSuggestions.characterSheetId, id)); } catch {}
+  try { await db.delete(characterClassFeatures).where(eq(characterClassFeatures.characterSheetId, id)); } catch {}
+  try { await db.delete(characterAttacks).where(eq(characterAttacks.characterSheetId, id)); } catch {}
+  try { await db.delete(combatResources).where(eq(combatResources.characterSheetId, id)); } catch {}
   await db.delete(characterSheets).where(eq(characterSheets.id, id));
 }
 

@@ -27,13 +27,18 @@
 
 <div class="p-8">
   <div class="max-w-2xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-2">
       <h1 class="text-xl font-bold text-stone-100">Requests</h1>
       <a href="/dashboard/{data?.table.id}/requests/new"
         class="px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-sm font-medium rounded">
         + New Request
       </a>
     </div>
+
+    <p class="text-sm text-stone-400 mb-6">
+      A space for private notes and requests to your DM — between sessions or during play.
+      Submit downtime activities, ask questions, or flag anything you'd like the DM to address.
+    </p>
 
     <!-- Status filter -->
     <div class="flex gap-1 mb-6 overflow-x-auto pb-1">

@@ -1,5 +1,5 @@
 {
-	"name": "session-master",
+	"name": "app",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -25,7 +25,6 @@
 		"vite": "^8.0.7"
 	},
 	"dependencies": {
-		"@sveltejs/adapter-node": "^5.5.4",
 		"@tailwindcss/vite": "^4.2.2",
 		"better-auth": "^1.6.5",
 		"buffer": "^6.0.3",

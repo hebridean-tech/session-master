@@ -12,12 +12,24 @@
   let spellSlots = $state(data.spellSlots || []);
   let inventory = $state(data.inventory || []);
   let currency = $state(data.currency || { cp:0, sp:0, ep:0, gp:0, pp:0 });
+  let classDisplay = $state('');
 
   const sheetId = $derived(data?.sheet?.id);
   const tableId = $derived(data?.table?.id || (typeof window !== 'undefined' ? window.location.pathname.split('/')[2] : '') || '');
   const s = $derived(data?.sheet);
 
   const scores = $derived(s.abilityScoresJson as Record<string, number> || {});
+
+  // Fetch multi-class display string
+  if (sheetId) {
+    fetch(`/api/characters/classes?characterSheetId=${sheetId}`)
+      .then(r => r.json())
+      .then((entries: any[]) => {
+        if (entries.length > 1) {
+          classDisplay = entries.map((e: any) => `${e.className} ${e.classLevel}`).join(' / ');
+        }
+      }).catch(() => {});
+  }
   function mod(score: number) { return Math.floor((score - 10) / 2); }
   function modStr(score: number) { const m = mod(score); return m >= 0 ? `+${m}` : `${m}`; }
 
@@ -120,6 +132,7 @@
         <h1 class="text-2xl md:text-3xl font-bold text-stone-100">{s.characterName}</h1>
         <p class="text-amber-500 text-sm mt-1">
           {s.characterClass}{s.subclass ? ` (${s.subclass})` : ''} {s.level}
+          {#if classDisplay} · <span class="text-stone-300">{classDisplay}</span>{/if}
           {s.ancestryOrSpecies ? ` · ${s.ancestryOrSpecies}` : ''}
         </p>
         <p class="text-stone-500 text-xs mt-1">Played by {data.userName}</p>

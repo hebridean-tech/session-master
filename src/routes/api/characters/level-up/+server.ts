@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { characterSheets } from '$lib/db/schema';
+import { characterSheets, characterClasses } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -141,6 +141,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const casterType = getCasterType(sheet.characterClass || '', sheet.subclass || null);
   const newSpellSlots = casterType ? getNewSpellSlots(casterType, newLevel) : [];
 
+  // Fetch existing class entries for multi-class display
+  const classEntries = await db.select().from(characterClasses)
+    .where(eq(characterClasses.characterSheetId, characterSheetId));
+  const hasClassEntries = classEntries.length > 0;
+
   const hasAsi = [4, 8, 12, 16, 19].includes(newLevel);
 
   const features = getClassFeatures(sheet.characterClass || '', sheet.subclass || null, String(newLevel));
@@ -165,5 +170,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     newClassFeatures: features.classFeatures,
     newSubclassFeatures: features.subclassFeatures,
     fightingStyleOptions,
+    classEntries,
+    hasClassEntries,
   });
 };

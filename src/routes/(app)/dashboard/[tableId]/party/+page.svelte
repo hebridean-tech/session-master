@@ -68,6 +68,7 @@
               <div>
                 <h3 class="text-stone-200 font-medium">{sheet.characterName}</h3>
                 <p class="text-amber-500 text-sm">{sheet.characterClass}{sheet.subclass ? ` (${sheet.subclass})` : ''} {sheet.level}</p>
+                <!-- TODO: replace with multi-class string from /api/characters/classes?characterSheetId=... -->
                 <p class="text-stone-500 text-xs mt-1">{user.name || user.email}</p>
               </div>
               <div class="flex flex-col items-end gap-1">

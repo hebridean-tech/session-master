@@ -226,6 +226,7 @@ export const characterSpells = pgTable('character_spells', {
   school: varchar('school', { length: 50 }),
   prepared: boolean('prepared').notNull().default(false),
   source: varchar('source', { length: 50 }).notNull().default('class_feature'),
+  castingTime: varchar('casting_time', { length: 50 }),
   description: text('description'),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
@@ -238,6 +239,76 @@ export const spellSlots = pgTable('spell_slots', {
   level: integer('level').notNull(),
   current: integer('current').notNull(),
   max: integer('max').notNull(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ── Character Classes (multi-class) ──
+export const characterClasses = pgTable('character_classes', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  characterSheetId: uuid('character_sheet_id').notNull().references(() => characterSheets.id, { onDelete: 'cascade' }),
+  className: varchar('class_name', { length: 100 }).notNull(),
+  subclass: varchar('subclass', { length: 100 }),
+  classLevel: integer('class_level').notNull().default(1),
+  hitDie: integer('hit_die').notNull(),
+  casterType: varchar('caster_type', { length: 20 }), // full, half, third, warlock, null
+  isPrimary: boolean('is_primary').notNull().default(false),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ── Character Class Features ──
+export const characterClassFeatures = pgTable('character_class_features', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  characterSheetId: uuid('character_sheet_id').notNull().references(() => characterSheets.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description'),
+  levelGained: integer('level_gained').notNull(),
+  source: varchar('source', { length: 50 }).notNull().default('class'),
+  actionType: varchar('action_type', { length: 50 }).notNull().default('passive'),
+  resourceType: varchar('resource_type', { length: 50 }),
+  resourceMax: integer('resource_max'),
+  resourceCurrent: integer('resource_current'),
+  damage: varchar('damage', { length: 100 }),
+  damageType: varchar('damage_type', { length: 50 }),
+  tags: jsonb('tags').$type<string[]>(),
+  displayOrder: integer('display_order').notNull().default(0),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ── Character Attacks ──
+export const characterAttacks = pgTable('character_attacks', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  characterSheetId: uuid('character_sheet_id').notNull().references(() => characterSheets.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  attackBonus: integer('attack_bonus'),
+  damage: varchar('damage', { length: 100 }),
+  damageType: varchar('damage_type', { length: 50 }),
+  abilityUsed: varchar('ability_used', { length: 3 }),
+  actionType: varchar('action_type', { length: 50 }).notNull().default('action'),
+  rangeType: varchar('range_type', { length: 20 }).notNull().default('melee'),
+  rangeFt: integer('range_ft'),
+  isProficient: boolean('is_proficient').notNull().default(true),
+  isMagical: boolean('is_magical').notNull().default(false),
+  isEquipped: boolean('is_equipped').notNull().default(true),
+  isVersatile: boolean('is_versatile').notNull().default(false),
+  versatileDamage: varchar('versatile_damage', { length: 100 }),
+  sourceType: varchar('source_type', { length: 50 }).notNull().default('manual'),
+  sourceItemId: uuid('source_item_id'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+});
+
+// ── Combat Resources ──
+export const combatResources = pgTable('combat_resources', {
+  id: uuid('id').primaryKey().defaultRandom(),
+  characterSheetId: uuid('character_sheet_id').notNull().references(() => characterSheets.id, { onDelete: 'cascade' }),
+  name: varchar('name', { length: 255 }).notNull(),
+  resourceType: varchar('resource_type', { length: 50 }).notNull(),
+  current: integer('current').notNull(),
+  max: integer('max').notNull(),
+  description: text('description'),
+  createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
