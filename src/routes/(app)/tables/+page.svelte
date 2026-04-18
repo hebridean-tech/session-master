@@ -27,7 +27,7 @@
         joinError = data.error;
       } else {
         joinSuccess = 'Joined table! Redirecting...';
-        setTimeout(() => window.location.reload(), 1000);
+        window.location.href = '/tables';
       }
     } catch (err: any) {
       joinError = 'Network error: ' + (err.message || 'Check your connection.');
