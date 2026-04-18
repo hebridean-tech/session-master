@@ -266,7 +266,7 @@
           </button>
         </div>
         <div class="mt-2">
-          <input bind:value={encounterInstructions} placeholder="Additional instructions (optional, e.g. "no potions", "focus on weapons")" class="w-full bg-stone-900 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
+          <input bind:value={encounterInstructions} placeholder='Additional instructions (optional, e.g. "no potions", "focus on weapons")' class="w-full bg-stone-900 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
         </div>
 
         <!-- Generated encounter loot for review -->
