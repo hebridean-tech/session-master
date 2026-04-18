@@ -379,7 +379,6 @@
                   <p class="text-sm mt-2 {mergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{mergeResult}</p>
                 {/if}
               {/if}
-            </div>
           {/if}
         {/if}
         {#if extractionError && safe_entities.length === 0}
