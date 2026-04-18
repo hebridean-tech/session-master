@@ -31,6 +31,10 @@
   let featSuggestions = $state<any[]>([]);
   let featSuggesting = $state(false);
   let featSuggestError = $state('');
+  // Step 3: ASI
+  let asiMode = $state<'stats' | 'feat' | null>(null);
+  let asiStats = $state<Record<string, number>>({});
+  let featName = $state('');
 
   async function suggestFeats() {
     featSuggesting = true;
