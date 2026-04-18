@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/db';
-import { characterSheets, inventoryItems, user } from '$lib/db/schema';
+import { characterSheets, inventoryItems, characterCurrency, user } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
 import { getAiSettings, getUserTableRole } from '$lib/db/queries';
 import { callAi, type AiProviderConfig } from '$lib/ai/provider';
@@ -41,7 +41,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
     .where(eq(characterSheets.tableId, tableId));
 
   // Build list of all items with owners
-  const allItems: Array<{ name: string; owner: string; characterName: string; quantity: number; magic: boolean; description: string | null }> = [];
+  const allItems: Array<{ name: string; owner: string; characterName: string; quantity: number; magic: boolean; description: string | null; currencyType?: string }> = [];
   for (const { sheet, owner } of sheets) {
     const inventory = await db.select().from(inventoryItems).where(eq(inventoryItems.characterSheetId, sheet.id));
     for (const item of inventory) {
@@ -53,6 +53,16 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
         magic: !!item.magic,
         description: item.description,
       });
+    }
+    // Add currency as stealable targets
+    const currency = await db.select().from(characterCurrency).where(eq(characterCurrency.characterSheetId, sheet.id));
+    if (currency.length > 0) {
+      const c = currency[0];
+      if (c.pp > 0) allItems.push({ name: 'Platinum Pieces', owner: owner.name || owner.email, characterName: sheet.characterName, quantity: c.pp, magic: false, description: null, currencyType: 'pp' });
+      if (c.gp > 0) allItems.push({ name: 'Gold Pieces', owner: owner.name || owner.email, characterName: sheet.characterName, quantity: c.gp, magic: false, description: null, currencyType: 'gp' });
+      if (c.ep > 0) allItems.push({ name: 'Electrum Pieces', owner: owner.name || owner.email, characterName: sheet.characterName, quantity: c.ep, magic: false, description: null, currencyType: 'ep' });
+      if (c.sp > 0) allItems.push({ name: 'Silver Pieces', owner: owner.name || owner.email, characterName: sheet.characterName, quantity: c.sp, magic: false, description: null, currencyType: 'sp' });
+      if (c.cp > 0) allItems.push({ name: 'Copper Pieces', owner: owner.name || owner.email, characterName: sheet.characterName, quantity: c.cp, magic: false, description: null, currencyType: 'cp' });
     }
   }
 
@@ -108,6 +118,7 @@ ${itemMap.map(i => `${i.rangeStart}-${Math.min(i.rangeStart + rangeSize - 1, max
       owner: i.owner,
       quantity: i.quantity,
       magic: i.magic,
+      currencyType: i.currencyType || null,
       rangeStart: i.rangeStart,
       rangeEnd: Math.min(i.rangeStart + rangeSize - 1, maxRoll),
     })),

@@ -81,7 +81,7 @@
     const hit = stealthItems.find(i => stealthRoll >= i.rangeStart && stealthRoll <= i.rangeEnd);
     if (hit) {
       stealthHit = hit;
-      stealthNarration = `Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — ${hit.name}${hit.magic ? ' (MAGIC ITEM)' : ''} held by ${hit.characterName}!`;
+      stealthNarration = `Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — ${hit.currencyType ? '💰 ' + hit.quantity + ' ' + hit.name + '' : hit.name + ''}${hit.magic ? ' (MAGIC ITEM)' : ''} held by ${hit.characterName}!`;
     } else {
       stealthNarration = `Rolled ${stealthRoll}: Miss — nothing was targeted.`;
     }
@@ -102,6 +102,7 @@
           targetCharacterSheetId: stealthTarget,
           itemName: stealthHit.name,
           quantity: stealthHit.quantity || 1,
+          currencyType: stealthHit.currencyType || null,
         }),
       });
       const data = await res.json();
@@ -243,6 +244,9 @@
                 <span class="text-stone-600">{item.characterName}</span>
                 {#if item.magic}
                   <span class="text-purple-400">✨</span>
+                {/if}
+                {#if item.currencyType}
+                  <span class="text-amber-400">💰</span>
                 {/if}
               </div>
             {/each}
