@@ -66,10 +66,37 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     }
   }
 
+  // Pre-extract AC from common D&D Beyond patterns
+  let extractedAc: string | null = null;
+  // Pattern: "ARMOR CLASS" followed by number on same or nearby line
+  const acPatterns = [
+    /ARMOR[\s\S]{0,40}(\d{1,3})/,
+    /Armou?r\s+Class[^\d]*(\d{1,3})/i,
+    /AC\s*(\d{1,3})/,
+  ];
+  for (const p of acPatterns) {
+    const m = p.exec(text);
+    if (m) { extractedAc = m[1]; break; }
+  }
+
+  // Pre-extract HP from common patterns
+  let extractedHpMax: string | null = null;
+  const hpPatterns = [
+    /Max\s*HP[^\d]*(\d{1,4})/i,
+    /Hit\s*Points[^\d]*(\d{1,4})/i,
+    /TOTAL\s*HP[^\d]*(\d{1,4})/i,
+  ];
+  for (const p of hpPatterns) {
+    const m = p.exec(text);
+    if (m) { extractedHpMax = m[1]; break; }
+  }
+
   let scoreHint = '';
   if (Object.keys(extractedScores).length > 0) {
     scoreHint = `\n\nPRE-EXTRACTED ABILITY SCORES (use these directly):\n${JSON.stringify(extractedScores)}`;
   }
+  if (extractedAc) scoreHint += `\nPRE-EXTRACTED AC: ${extractedAc}`;
+  if (extractedHpMax) scoreHint += `\nPRE-EXTRACTED HP MAX: ${extractedHpMax}`;
 
   // AI parsing
   if (settings && settings.permissionLevel >= 1) {
@@ -83,6 +110,14 @@ ABILITY SCORE RULES:
 - Scores are 3-30 (typically 8-20). Modifiers are small (+3, -1, +0).
 - Modifier = floor((score - 10) / 2). Score 13 → +1, score 5 → -3.
 - NEVER use a modifier as a score. If pre-extracted scores are given, use them.
+
+AC RULES:
+- D&D Beyond PDFs list AC as a number (typically 10-22) under "ARMOR CLASS" or "ARMOR" header.
+- The AC value is a plain number, NOT a modifier like "+2". If you see "+2" under ARMOR, that IS the AC value (e.g. from a Monk or Barbarian bonus). Look for the total AC number near the defenses section.
+- If pre-extracted AC is given, use it directly.
+
+HP RULES:
+- HP is a plain number (typically 4-300). If pre-extracted HP MAX is given, use it directly.
 
 MULTI-CLASS DETECTION:
 - Look for multiple class names (e.g. "Fighter 5 / Rogue 3" or "Level 8 (Fighter 5, Rogue 3)")

@@ -55,6 +55,27 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
   if (!text.trim()) return json({ error: 'Could not extract text from the file.' }, { status: 400 });
 
+  // Pre-extract ability scores
+  const savingThrowPattern = /^(STRENGTH|DEXTERITY|CONSTITUTION|INTELLIGENCE|WISDOM|CHARISMA)\s*\n?\s*(\d{1,2})/gm;
+  const extractedScores: Record<string, string> = {};
+  let m;
+  while ((m = savingThrowPattern.exec(text)) !== null) {
+    const ability = m[1].slice(0, 3).toLowerCase();
+    const score = parseInt(m[2]);
+    if (score >= 3 && score <= 30 && !extractedScores[ability]) extractedScores[ability] = String(score);
+  }
+
+  // Pre-extract AC
+  let extractedAc: string | null = null;
+  for (const p of [/ARMOR[\s\S]{0,40}(\d{1,3})/, /Armou?r\s+Class[^\d]*(\d{1,3})/i, /AC\s*(\d{1,3})/]) {
+    const match = p.exec(text);
+    if (match) { extractedAc = match[1]; break; }
+  }
+
+  let scoreHint = '';
+  if (Object.keys(extractedScores).length > 0) scoreHint += `\nPRE-EXTRACTED ABILITY SCORES: ${JSON.stringify(extractedScores)}`;
+  if (extractedAc) scoreHint += `\nPRE-EXTRACTED AC: ${extractedAc}`;
+
   if (settings && settings.permissionLevel >= 1) {
     try {
       const result = await callAi(toProviderConfig(settings), [
@@ -63,9 +84,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
           content: `You are a D&D character sheet parser. Extract ALL data from a D&D Beyond character sheet PDF.
 
 ABILITY SCORE RULES:
-- Scores are 3-30 (typically 8-20). Modifiers are small (+3, -1, +0).
-- Modifier = floor((score - 10) / 2). Score 13 → +1, score 5 → -3.
-- NEVER use a modifier as a score.
+- Scores are 3-30 (typically 8-20). NEVER use a modifier as a score.
+
+AC RULES:
+- D&D Beyond PDFs list AC as a number (10-22) under "ARMOR CLASS" or "ARMOR".
+- If pre-extracted AC is given, use it directly. Do NOT output "—" for AC.
 
 MULTI-CLASS DETECTION:
 - Look for multiple class names (e.g. "Fighter 5 / Rogue 3")
@@ -103,7 +126,7 @@ Return ONLY a JSON object with ALL of these fields (use null for anything not fo
 }
 Return ONLY the JSON, no markdown fences or explanation.`,
         },
-        { role: 'user', content: text },
+        { role: 'user', content: text + scoreHint },
       ], { maxTokens: 8192, temperature: 0.1 });
 
       let parsed: Record<string, any>;
