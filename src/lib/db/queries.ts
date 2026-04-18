@@ -1,5 +1,5 @@
 import { db } from '$lib/db';
-import { tables, tableMembers, user, characterSheets, downtimeRequests, requestComments, diceRolls, downtimeTimeWindows, requestTimeAllocations, activityLog, sessionNotes, noteFiles, aiSettings, aiJobs, extractedEntities, inventoryItems, inventoryChangeSuggestions, characterCurrency, characterSpells, spellSlots, dmPlans, lootEntries, session, account, verification, characterClassFeatures, characterAttacks, combatResources } from './schema';
+import { tables, tableMembers, user, characterSheets, downtimeRequests, requestComments, diceRolls, downtimeTimeWindows, requestTimeAllocations, activityLog, sessionNotes, noteFiles, aiSettings, aiJobs, extractedEntities, inventoryItems, inventoryChangeSuggestions, characterCurrency, characterSpells, spellSlots, dmPlans, lootEntries, session, account, verification, characterClassFeatures, characterAttacks, combatResources, characterClasses } from './schema';
 import { eq, and, desc, sum, sql, like, gte, lte, count as countFn } from 'drizzle-orm';
 import crypto from 'crypto';
 
@@ -191,6 +191,51 @@ export async function createCharacterSheet(data: {
     })
     .returning();
   return sheet;
+}
+
+// ── Multi-class helpers ──
+
+const HIT_DIE_LOOKUP: Record<string, number> = {
+  artificer: 8, bard: 8, cleric: 8, druid: 8, monk: 8, rogue: 8, warlock: 8,
+  fighter: 10, paladin: 10, ranger: 10,
+  barbarian: 12, bloodhunter: 12,
+  sorcerer: 6, wizard: 6,
+};
+
+const FULL_CASTER_CLASSES = new Set(['artificer','bard','cleric','druid','sorcerer','wizard']);
+const HALF_CASTER_CLASSES = new Set(['paladin','ranger']);
+const THIRD_CASTER_SUBCLASSES: Record<string, string[]> = {
+  fighter: ['eldritch knight'],
+  rogue: ['arcane trickster'],
+};
+
+function resolveCasterType(className: string, subclass: string | null): 'full' | 'half' | 'third' | 'warlock' | null {
+  const cls = className.toLowerCase();
+  const sub = (subclass || '').toLowerCase();
+  if (FULL_CASTER_CLASSES.has(cls)) return 'full';
+  if (HALF_CASTER_CLASSES.has(cls)) return 'half';
+  if (cls === 'warlock') return 'warlock';
+  const subs = THIRD_CASTER_SUBCLASSES[cls];
+  if (subs && subs.some(s => sub.includes(s))) return 'third';
+  return null;
+}
+
+export async function createCharacterClasses(sheetId: string, classes: Array<{className: string; subclass: string | null; classLevel: number; isPrimary: boolean}>) {
+  const results = [];
+  for (const c of classes) {
+    const cls = c.className.toLowerCase();
+    const [entry] = await db.insert(characterClasses).values({
+      characterSheetId: sheetId,
+      className: c.className,
+      subclass: c.subclass || null,
+      classLevel: c.classLevel,
+      hitDie: HIT_DIE_LOOKUP[cls] || 8,
+      casterType: resolveCasterType(c.className, c.subclass) || null,
+      isPrimary: c.isPrimary,
+    }).returning();
+    results.push(entry);
+  }
+  return results;
 }
 
 export async function getCharacterSheetsByTable(tableId: string) {

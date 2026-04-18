@@ -45,6 +45,7 @@ export const actions: Actions = {
     let pendingSpells: any[] = [];
     let pendingInventory: any[] = [];
     let pendingCurrency: any = {};
+    let pendingClasses: any[] = [];
     try {
       const sp = form.get('pendingSpells') as string;
       if (sp) pendingSpells = JSON.parse(sp);
@@ -56,6 +57,10 @@ export const actions: Actions = {
     try {
       const cur = form.get('pendingCurrency') as string;
       if (cur) pendingCurrency = JSON.parse(cur);
+    } catch {}
+    try {
+      const cl = form.get('pendingClasses') as string;
+      if (cl) pendingClasses = JSON.parse(cl);
     } catch {}
 
     const sheet = await createCharacterSheet({
@@ -84,6 +89,12 @@ export const actions: Actions = {
       flaws: (form.get('flaws') as string)?.trim() || undefined,
       backstory: (form.get('backstory') as string)?.trim() || undefined,
     });
+
+    // Create multi-class entries if provided from PDF import
+    if (pendingClasses.length > 0) {
+      const { createCharacterClasses } = await import('$lib/db/queries');
+      await createCharacterClasses(sheet.id, pendingClasses);
+    }
 
     // If we have pending items from upload, create them via direct DB calls
     if (pendingSpells.length > 0 || pendingInventory.length > 0 || Object.keys(pendingCurrency).length > 0) {

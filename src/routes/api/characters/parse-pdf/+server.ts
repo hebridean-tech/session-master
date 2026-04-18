@@ -84,12 +84,22 @@ ABILITY SCORE RULES:
 - Modifier = floor((score - 10) / 2). Score 13 → +1, score 5 → -3.
 - NEVER use a modifier as a score. If pre-extracted scores are given, use them.
 
+MULTI-CLASS DETECTION:
+- Look for multiple class names (e.g. "Fighter 5 / Rogue 3" or "Level 8 (Fighter 5, Rogue 3)")
+- The total level is the sum of all class levels
+- For each class, extract: className, subclass (if any), classLevel
+- The first class listed is the primary class
+- If only one class is found, put it in the classes array with its full level
+
 Return ONLY a JSON object with ALL of these fields (use null for anything not found):
 {
   "characterName": string,
-  "characterClass": string,
-  "subclass": string or null,
-  "level": number,
+  "classes": [
+    { "className": string, "subclass": string or null, "classLevel": number, "isPrimary": boolean }
+  ],
+  "level": number (total level, sum of all class levels),
+  "characterClass": string (primary class name, for backward compat),
+  "subclass": string or null (primary subclass, for backward compat),
   "ancestryOrSpecies": string,
   "background": string or null,
   "alignment": string or null (two letters like "NG", "CN"),

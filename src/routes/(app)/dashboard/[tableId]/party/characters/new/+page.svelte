@@ -43,12 +43,22 @@
   let pendingSpells = $state<any[]>([]);
   let pendingInventory = $state<any[]>([]);
   let pendingCurrency = $state<any>({});
+  let pendingClasses = $state<any[]>([]);
 
   function fillFromParsed(p: Record<string, any>) {
     characterName = p.characterName || '';
     characterClass = p.characterClass || '';
     subclass = p.subclass || '';
     level = parseInt(p.level) || 1;
+    // Store multi-class data for submission
+    if (p.classes && Array.isArray(p.classes) && p.classes.length > 0) {
+      pendingClasses = p.classes;
+      // Back-compat: primary class into single-class fields
+      const primary = p.classes.find((c: any) => c.isPrimary) || p.classes[0];
+      characterClass = primary.className || '';
+      subclass = primary.subclass || '';
+      level = p.classes.reduce((sum: number, c: any) => sum + (parseInt(c.classLevel) || 0), 0);
+    }
     ancestryOrSpecies = p.ancestryOrSpecies || '';
     background = p.background || '';
     alignment = p.alignment || '';
@@ -171,6 +181,7 @@
         <input type="hidden" name="pendingSpells" value={JSON.stringify(pendingSpells)} />
         <input type="hidden" name="pendingInventory" value={JSON.stringify(pendingInventory)} />
         <input type="hidden" name="pendingCurrency" value={JSON.stringify(pendingCurrency)} />
+        <input type="hidden" name="pendingClasses" value={JSON.stringify(pendingClasses)} />
 
         <!-- Basic Info -->
         <div>
