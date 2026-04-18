@@ -26,29 +26,17 @@
   let autoMergeResult = $state('');
   const allEntities = $derived(data?.entities || []);
 
-  async function handleAutoMerge() {
-    autoMerging = true;
-    autoMergeResult = '';
+  async function handleClearEntities() {
     try {
-      const ids = allEntities.map(e => e.id);
-      const res = await fetch('/api/ai/entities/auto-merge', {
+      const res = await fetch('/api/ai/entities/clear', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tableId: data?.table.id, entityIds: ids }),
+        body: JSON.stringify({ tableId: data?.table.id, entityIds: allEntities.map(e => e.id) }),
       });
       const d = await res.json();
-      if (d.success) {
-        autoMergeResult = d.merged.length > 0
-          ? `Merged ${d.merged.length} pair(s): ${d.merged.map((m: any) => m.alias + ' → ' + m.primary).join(', ')}`
-          : 'No duplicates found.';
-        setTimeout(() => window.location.reload(), 2000);
-      } else {
-        autoMergeResult = 'Error: ' + (d.error || 'Unknown');
-      }
-    } catch (e: any) {
-      autoMergeResult = 'Error: ' + e.message;
-    }
-    autoMerging = false;
+      if (d.success) window.location.reload();
+      else autoMergeResult = 'Error: ' + (d.error || 'Unknown');
+    } catch (e: any) { autoMergeResult = 'Error: ' + e.message; }
   }
   let showEntities = $state(true);
 
@@ -337,16 +325,10 @@
                 {mergeMode ? '✕ Close merge' : '🔗 Merge entities'}
               </button>
               <button
-                onclick={handleAutoMerge}
-                disabled={autoMerging}
-                class="text-xs px-2.5 py-1 bg-amber-700/40 hover:bg-amber-700/60 text-amber-300 rounded border border-amber-800/40 disabled:opacity-50 flex items-center gap-1.5"
+                onclick={handleClearEntities}
+                class="text-xs px-2.5 py-1 bg-red-900/40 hover:bg-red-900/60 text-red-300 rounded border border-red-800/40 flex items-center gap-1.5"
               >
-                {#if autoMerging}
-                  <span class="animate-spin inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full"></span>
-                  Scanning…
-                {:else}
-                  ✨ Auto-merge duplicates
-                {/if}
+                🗑️ Clear all entities
               </button>
             </div>
             {#if autoMergeResult}
