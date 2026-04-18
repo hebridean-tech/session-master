@@ -24,6 +24,9 @@
   let merging = $state(false);
   let autoMerging = $state(false);
   let autoMergeResult = $state('');
+  let editingEntityId = $state('');
+  let editEntityName = $state('');
+  let editEntityType = $state('');
   const allEntities = $derived(data?.entities || []);
 
   async function handleClearEntities() {
@@ -37,6 +40,36 @@
       if (d.success) window.location.reload();
       else autoMergeResult = 'Error: ' + (d.error || 'Unknown');
     } catch (e: any) { autoMergeResult = 'Error: ' + e.message; }
+  }
+
+  function startEditEntity(e: any) {
+    editingEntityId = e.id;
+    editEntityName = e.name;
+    editEntityType = e.entityType;
+  }
+
+  async function saveEntityEdit() {
+    try {
+      const res = await fetch('/api/ai/entities/update', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entityId: editingEntityId, name: editEntityName.trim(), entityType: editEntityType }),
+      });
+      const d = await res.json();
+      if (d.success) { editingEntityId = ''; window.location.reload(); }
+    } catch { /* keep editing */ }
+  }
+
+  async function deleteEntity(id: string) {
+    try {
+      const res = await fetch('/api/ai/entities/clear', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableId: data?.table.id, entityIds: [id] }),
+      });
+      const d = await res.json();
+      if (d.success) window.location.reload();
+    } catch { /* ignore */ }
   }
   let showEntities = $state(true);
 
@@ -294,24 +327,48 @@
                     <h3 class="text-xs font-semibold text-stone-500 uppercase tracking-wide mb-2">{type}s</h3>
                     <div class="flex flex-wrap gap-2">
                       {#each entities as entity (entity.id)}
-                        <!-- svelte-ignore a11y_no_static_element_interactions -->
-                        <div
-                          class="group relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-sm cursor-default
-                            {entityTypeBadge[entity.entityType] || 'bg-stone-800 text-stone-300 border-stone-700'}">
-                          <span class="font-medium">{entity.name}</span>
-                          {#if entity.confidence >= 0.7}
-                            <span class="text-xs opacity-60">●</span>
-                          {:else if entity.confidence < 0.3}
-                            <span class="text-xs opacity-40">○</span>
-                          {/if}
-                          <!-- Tooltip -->
-                          {#if entity.summary}
-                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-stone-800 border border-stone-700 rounded p-2 text-xs text-stone-300 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                              {entity.summary}
-                              <div class="text-stone-500 mt-1">Confidence: {entity.confidence >= 0.7 ? 'high' : entity.confidence >= 0.3 ? 'medium' : 'low'}</div>
-                            </div>
-                          {/if}
-                        </div>
+                        {#if editingEntityId === entity.id}
+                          <div class="inline-flex items-center gap-1 px-2 py-1 rounded border bg-stone-800 border-stone-600">
+                            <input
+                              bind:value={editEntityName}
+                              class="w-24 px-1.5 py-0.5 bg-stone-900 border border-stone-600 rounded text-stone-200 text-sm"
+                            />
+                            <select bind:value={editEntityType} class="px-1 py-0.5 bg-stone-900 border border-stone-600 rounded text-stone-200 text-xs">
+                              <option>Player Character</option>
+                              <option>NPC</option>
+                              <option>Location</option>
+                              <option>Quest</option>
+                              <option>Faction</option>
+                              <option>Item</option>
+                              <option>Rumor</option>
+                            </select>
+                            <button onclick={saveEntityEdit} class="text-green-400 hover:text-green-300 text-xs px-1">✓</button>
+                            <button onclick={() => editingEntityId = ''} class="text-stone-500 hover:text-stone-300 text-xs px-1">✕</button>
+                          </div>
+                        {:else}
+                          <!-- svelte-ignore a11y_no_static_element_interactions -->
+                          <div
+                            class="group relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-sm cursor-default
+                              {entityTypeBadge[entity.entityType] || 'bg-stone-800 text-stone-300 border-stone-700'}">
+                            <span class="font-medium">{entity.name}</span>
+                            {#if entity.confidence >= 0.7}
+                              <span class="text-xs opacity-60">●</span>
+                            {:else if entity.confidence < 0.3}
+                              <span class="text-xs opacity-40">○</span>
+                            {/if}
+                            {#if isDm}
+                              <button onclick={() => startEditEntity(entity)} class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-stone-200 ml-0.5 transition-opacity" title="Edit">✏️</button>
+                              <button onclick={() => deleteEntity(entity.id)} class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity" title="Delete">✕</button>
+                            {/if}
+                            <!-- Tooltip -->
+                            {#if entity.summary}
+                              <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-stone-800 border border-stone-700 rounded p-2 text-xs text-stone-300 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+                                {entity.summary}
+                                <div class="text-stone-500 mt-1">Confidence: {entity.confidence >= 0.7 ? 'high' : entity.confidence >= 0.3 ? 'medium' : 'low'}</div>
+                              </div>
+                            {/if}
+                          </div>
+                        {/if}
                       {/each}
                     </div>
                   </div>
