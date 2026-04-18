@@ -79,6 +79,11 @@
               <p class="text-stone-500 text-xs mt-2">{table.systemName} · {table.edition} · {member.role.toUpperCase()}</p>
             </div>
             <span class="text-amber-600 text-sm font-mono">{table.inviteCode}</span>
+            <button
+              onclick={(e) => { e.preventDefault(); navigator.clipboard?.writeText(table.inviteCode); }}
+              class="text-stone-500 hover:text-amber-400 text-xs ml-2"
+              title="Copy invite code"
+            >📋</button>
           </div>
         </a>
       {/each}

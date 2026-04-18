@@ -9,6 +9,23 @@
   <div class="max-w-2xl mx-auto space-y-6">
     <h1 class="text-xl font-bold text-stone-100">Settings</h1>
 
+    <!-- Invite Code / Share Link -->
+    <div class="bg-stone-900 border border-stone-800 rounded-lg p-5">
+      <h2 class="text-sm font-semibold text-amber-400 mb-3">🔗 Invite Code</h2>
+      <p class="text-stone-400 text-xs mb-3">Share this code with players so they can join your table.</p>
+      <div class="flex items-center gap-2">
+        <code class="flex-1 bg-stone-800 border border-stone-700 text-amber-400 font-mono text-lg px-3 py-2 rounded select-all">{data?.table?.inviteCode}</code>
+        <button
+          onclick={() => {
+            const code = data?.table?.inviteCode;
+            if (code) navigator.clipboard?.writeText(code);
+          }}
+          class="px-3 py-2 bg-stone-700 hover:bg-stone-600 text-stone-200 text-sm rounded transition-colors"
+          title="Copy invite code"
+        >📋 Copy</button>
+      </div>
+    </div>
+
     <!-- Downtime Windows -->
     {#if isDm}
       <div class="bg-stone-900 border border-stone-800 rounded-lg p-5">
