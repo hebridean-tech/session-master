@@ -518,7 +518,7 @@
         {/if}
 
         <!-- Apply Button -->
-        {(editLootGained.length + editMoneyGained.length + editLootLost.length + editMoneySpent.length) > 0 && (
+        {#if (editLootGained.length + editMoneyGained.length + editLootLost.length + editMoneySpent.length) > 0}
           <div class="border-t border-stone-800 pt-4 flex flex-col sm:flex-row gap-3">
             <button
               onclick={applyLoot}
@@ -529,7 +529,7 @@
             </button>
             <p class="text-stone-500 text-xs">Review items above. Remove any you don't want to apply.</p>
           </div>
-        )}
+        {/if}
       {/if}
     </div>
   {/if}
