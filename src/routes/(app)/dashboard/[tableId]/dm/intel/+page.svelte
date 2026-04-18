@@ -19,7 +19,7 @@
   let stealthNarration = $state('');
 
   // Active tab
-  let activeTab = $state<'chat' | 'stealth'>('chat');
+  let activeTab = $state<'chat' | 'stealth' | 'loot'>('chat');
 
   async function sendChat() {
     if (!chatInput.trim() || chatLoading) return;
@@ -79,6 +79,88 @@
       stealthNarration = `Rolled ${stealthRoll}: Miss — nothing was targeted.`;
     }
   }
+
+  // Loot review state
+  let lootSessionLabel = $state('');
+  let lootLoading = $state(false);
+  let lootData = $state<any>(null);
+  let lootApplying = $state(false);
+  let lootError = $state('');
+
+  // Editable loot arrays
+  let editLootGained = $state<any[]>([]);
+  let editMoneyGained = $state<any[]>([]);
+  let editLootLost = $state<any[]>([]);
+  let editMoneySpent = $state<any[]>([]);
+
+  async function analyzeLoot() {
+    if (!lootSessionLabel.trim() || lootLoading) return;
+    lootLoading = true;
+    lootError = '';
+    lootData = null;
+    try {
+      const res = await fetch('/api/dm-intel/loot-review', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableId, sessionLabel: lootSessionLabel.trim() }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        lootError = data.error;
+      } else {
+        lootData = data;
+        const charMap = data.charIdMap || {};
+        // Map character names to IDs
+        editLootGained = (data.data.lootGained || []).map((i: any) => ({
+          ...i, characterSheetId: charMap[i.characterName] || ''
+        }));
+        editMoneyGained = (data.data.moneyGained || []).map((i: any) => ({
+          ...i, characterSheetId: charMap[i.characterName] || ''
+        }));
+        editLootLost = (data.data.lootLost || []).map((i: any) => ({
+          ...i, characterSheetId: charMap[i.characterName] || ''
+        }));
+        editMoneySpent = (data.data.moneySpent || []).map((i: any) => ({
+          ...i, characterSheetId: charMap[i.characterName] || ''
+        }));
+      }
+    } catch (e: any) {
+      lootError = e.message;
+    }
+    lootLoading = false;
+  }
+
+  function removeLootItem(arr: any[], index: number) {
+    arr.splice(index, 1);
+    arr = [...arr]; // trigger reactivity
+  }
+
+  async function applyLoot() {
+    lootApplying = true;
+    try {
+      const res = await fetch('/api/dm-intel/loot-apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tableId,
+          lootGained: editLootGained.filter(i => i.characterSheetId),
+          moneyGained: editMoneyGained.filter(i => i.characterSheetId),
+          lootSpent: [],
+          moneySpent: editMoneySpent.filter(i => i.characterSheetId),
+          lootLost: editLootLost.filter(i => i.characterSheetId),
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`Applied: ${data.stats.itemsAdded} items added, ${data.stats.itemsRemoved} removed, ${data.stats.currencyAdded} currency entries updated.`);
+      } else {
+        alert('Apply failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e: any) {
+      alert('Error: ' + e.message);
+    }
+    lootApplying = false;
+  }
 </script>
 
 <svelte:head>
@@ -103,6 +185,13 @@
         {activeTab === 'stealth' ? 'bg-amber-600 text-stone-950' : 'bg-stone-800 text-stone-300 hover:bg-stone-700'}"
     >
       🥷 Stealth Encounter
+    </button>
+    <button
+      onclick={() => activeTab = 'loot'}
+      class="px-4 py-2 rounded-lg text-sm font-medium transition-colors min-h-[44px]
+        {activeTab === 'loot' ? 'bg-amber-600 text-stone-950' : 'bg-stone-800 text-stone-300 hover:bg-stone-700'}"
+    >
+      💰 Loot Review
     </button>
   </div>
 
@@ -234,6 +323,145 @@
             </div>
           {/if}
         </div>
+      {/if}
+    </div>
+  {/if}
+
+  <!-- Loot Review -->
+  {#if activeTab === 'loot'}
+    <div class="bg-stone-900 border border-stone-800 rounded-lg p-4 space-y-4">
+      <p class="text-stone-400 text-sm">
+        Cross-reference all player notes for a session, extract loot gained/spent, then apply to inventories.
+      </p>
+
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input
+          type="text"
+          bind:value={lootSessionLabel}
+          placeholder="Session label (e.g. Session 12)"
+          class="flex-1 px-3 py-2 bg-stone-800 border border-stone-700 rounded-md text-stone-100 placeholder-stone-500 text-sm focus:outline-none focus:ring-2 focus:ring-amber-600"
+          onkeydown={(e) => e.key === 'Enter' && analyzeLoot()}
+        />
+        <button
+          onclick={analyzeLoot}
+          disabled={lootLoading || !lootSessionLabel.trim()}
+          class="px-4 py-2.5 bg-amber-600 hover:bg-amber-500 text-stone-950 rounded-md text-sm font-medium disabled:opacity-50 min-h-[44px]"
+        >
+          {lootLoading ? '🔍 Analyzing...' : '🔍 Analyze Notes'}
+        </button>
+      </div>
+
+      {#if lootError}
+        <div class="bg-red-950/30 border border-red-900/50 rounded-lg p-3 text-red-300 text-sm">{lootError}</div>
+      {/if}
+
+      {#if lootData}
+        <!-- Summary -->
+        <div class="border-t border-stone-800 pt-4">
+          <h3 class="text-lg font-semibold text-stone-200 mb-2">📋 Session Summary</h3>
+          <p class="text-stone-300 text-sm mb-1">{lootData.data.summary}</p>
+          <p class="text-stone-500 text-xs">{lootData.noteCount} notes from: {lootData.notesAuthors.join(', ')}</p>
+        </div>
+
+        <!-- Loot Gained -->
+        {#if editLootGained.length > 0}
+          <div class="border-t border-stone-800 pt-4">
+            <h3 class="text-sm font-semibold text-emerald-400 mb-2">📦 Loot Gained</h3>
+            <div class="space-y-2">
+              {#each editLootGained as item, i}
+                <div class="flex items-start gap-2 bg-stone-800 rounded p-2 text-sm">
+                  <div class="flex-1">
+                    <span class="text-stone-200">{item.itemName}</span>
+                    <span class="text-stone-500 text-xs ml-1">×{item.quantity || 1}</span>
+                    <span class="text-stone-400 text-xs ml-2">→ {item.characterName}</span>
+                    {#if item.notes}
+                      <span class="text-stone-500 text-xs block mt-0.5">{item.notes}</span>
+                    {/if}
+                  </div>
+                  <button onclick={() => removeLootItem(editLootGained, i)} class="text-red-400 hover:text-red-300 text-xs px-1">✕</button>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <!-- Money Gained -->
+        {#if editMoneyGained.length > 0}
+          <div class="border-t border-stone-800 pt-4">
+            <h3 class="text-sm font-semibold text-yellow-400 mb-2">💰 Money Gained</h3>
+            <div class="space-y-2">
+              {#each editMoneyGained as entry, i}
+                <div class="flex items-start gap-2 bg-stone-800 rounded p-2 text-sm">
+                  <div class="flex-1">
+                    <span class="text-stone-200">{entry.amount} {entry.currency}</span>
+                    <span class="text-stone-400 text-xs ml-2">→ {entry.characterName}</span>
+                    {#if entry.notes}
+                      <span class="text-stone-500 text-xs block mt-0.5">{entry.notes}</span>
+                    {/if}
+                  </div>
+                  <button onclick={() => removeLootItem(editMoneyGained, i)} class="text-red-400 hover:text-red-300 text-xs px-1">✕</button>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <!-- Loot Lost -->
+        {#if editLootLost.length > 0}
+          <div class="border-t border-stone-800 pt-4">
+            <h3 class="text-sm font-semibold text-red-400 mb-2">💔 Loot Lost</h3>
+            <div class="space-y-2">
+              {#each editLootLost as item, i}
+                <div class="flex items-start gap-2 bg-stone-800 rounded p-2 text-sm">
+                  <div class="flex-1">
+                    <span class="text-stone-200">{item.itemName}</span>
+                    <span class="text-stone-500 text-xs ml-1">×{item.quantity || 1}</span>
+                    <span class="text-stone-400 text-xs ml-2">← {item.characterName}</span>
+                    <span class="text-stone-500 text-xs block mt-0.5">{item.reason}</span>
+                  </div>
+                  <button onclick={() => removeLootItem(editLootLost, i)} class="text-red-400 hover:text-red-300 text-xs px-1">✕</button>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        <!-- Money Spent -->
+        {#if editMoneySpent.length > 0}
+          <div class="border-t border-stone-800 pt-4">
+            <h3 class="text-sm font-semibold text-orange-400 mb-2">💸 Money Spent</h3>
+            <div class="space-y-2">
+              {#each editMoneySpent as entry, i}
+                <div class="flex items-start gap-2 bg-stone-800 rounded p-2 text-sm">
+                  <div class="flex-1">
+                    <span class="text-stone-200">{entry.amount} {entry.currency}</span>
+                    <span class="text-stone-400 text-xs ml-2">← {entry.characterName}</span>
+                    <span class="text-stone-500 text-xs block mt-0.5">{entry.notes}</span>
+                  </div>
+                  <button onclick={() => removeLootItem(editMoneySpent, i)} class="text-red-400 hover:text-red-300 text-xs px-1">✕</button>
+                </div>
+              {/each}
+            </div>
+          </div>
+        {/if}
+
+        {#if editLootGained.length === 0 && editMoneyGained.length === 0 && editLootLost.length === 0 && editMoneySpent.length === 0}
+          <p class="text-stone-500 text-sm text-center py-4">No loot changes detected in these notes.</p>
+        {/if}
+
+        <!-- Apply Button -->
+        {(editLootGained.length + editMoneyGained.length + editLootLost.length + editMoneySpent.length) > 0 && (
+          <div class="border-t border-stone-800 pt-4 flex flex-col sm:flex-row gap-3">
+            <button
+              onclick={applyLoot}
+              disabled={lootApplying}
+              class="px-5 py-3 bg-emerald-700 hover:bg-emerald-600 text-white rounded-lg text-sm font-medium disabled:opacity-50 min-h-[44px]"
+            >
+              {lootApplying ? 'Applying...' : '✅ Apply to Inventories'}
+            </button>
+            <p class="text-stone-500 text-xs">Review items above. Remove any you don't want to apply.</p>
+          </div>
+        )}
       {/if}
     </div>
   {/if}
