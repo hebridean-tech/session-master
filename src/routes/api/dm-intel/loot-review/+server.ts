@@ -2,7 +2,7 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { db } from '$lib/db';
 import { sessionNotes, user, characterSheets } from '$lib/db/schema';
-import { eq, and, desc } from 'drizzle-orm';
+import { eq, and, desc, ilike } from 'drizzle-orm';
 import { getAiSettings, getUserTableRole } from '$lib/db/queries';
 import { callAi, type AiProviderConfig } from '$lib/ai/provider';
 
@@ -39,7 +39,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
   })
     .from(sessionNotes)
     .innerJoin(user, eq(sessionNotes.authorUserId, user.id))
-    .where(and(eq(sessionNotes.tableId, tableId), eq(sessionNotes.sessionLabel, sessionLabel)))
+    .where(and(eq(sessionNotes.tableId, tableId), ilike(sessionNotes.sessionLabel, sessionLabel)))
     .orderBy(desc(sessionNotes.createdAt));
 
   if (notes.length === 0) {
