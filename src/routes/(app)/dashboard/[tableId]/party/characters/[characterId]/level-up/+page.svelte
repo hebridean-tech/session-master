@@ -128,7 +128,7 @@
     const current = visibleSteps[step];
     if (!current) return false;
     if (current.id === 'class') return classSelectionMode !== null;
-    if (current.id === 'confirm') return hpChoice !== null;
+    if (current.id === 'review') return true;
     if (current.id === 'asi' && levelData?.hasAsi) {
       if (asiMode === 'stats') {
         const total = Object.values(asiStats).reduce((a: number, b: number) => a + b, 0);
