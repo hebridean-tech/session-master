@@ -106,6 +106,38 @@ export async function getUserTableRole(userId: string, tableId: string) {
   return member;
 }
 
+export async function removeTableMember(memberId: string, tableId: string) {
+  // Delete character sheets owned by this member at this table
+  const sheets = await db.select({ id: characterSheets.id })
+    .from(characterSheets)
+    .where(and(eq(characterSheets.tableId, tableId), eq(characterSheets.userId, (
+      await db.select({ userId: tableMembers.userId }).from(tableMembers).where(eq(tableMembers.id, memberId)).limit(1)
+    )[0]?.userId
+  )));
+  for (const sheet of sheets) {
+    await deleteCharacterSheet(sheet.id);
+  }
+  return db.delete(tableMembers).where(eq(tableMembers.id, memberId)).returning();
+}
+
+export async function deduplicateTableMembers(tableId: string) {
+  // Get all members, group by userId, keep oldest
+  const members = await db.select().from(tableMembers).where(eq(tableMembers.tableId, tableId));
+  const seen = new Map<string, string>();
+  const toDelete: string[] = [];
+  for (const m of members) {
+    if (seen.has(m.userId)) {
+      toDelete.push(m.id);
+    } else {
+      seen.set(m.userId, m.id);
+    }
+  }
+  for (const id of toDelete) {
+    await db.delete(tableMembers).where(eq(tableMembers.id, id));
+  }
+  return toDelete.length;
+}
+
 // ── Character Sheets ──
 export async function createCharacterSheet(data: {
   tableId: string;
