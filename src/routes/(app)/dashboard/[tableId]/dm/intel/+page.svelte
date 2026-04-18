@@ -110,6 +110,33 @@
     try {
       const sourceChar = partyMembers.find(c => c.name === stealthHit.characterName);
       if (!sourceChar) { alert('Source character not found'); stealthTransferring = false; return; }
+
+      if (stealthTarget === '__remove') {
+        // Remove from party entirely
+        const res = await fetch('/api/dm-intel/stealth-transfer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tableId,
+            sourceCharacterSheetId: sourceChar.id,
+            targetCharacterSheetId: null,
+            itemName: stealthHit.name,
+            quantity: stealthHit.quantity || 1,
+            currencyType: stealthHit.currencyType || null,
+          }),
+        });
+        const data = await res.json();
+        if (data.success) {
+          stealthNarration += ` → Removed from party (stolen/lost)!`;
+          stealthHit = null;
+          stealthTarget = '';
+        } else {
+          alert('Failed: ' + (data.error || 'Unknown error'));
+        }
+        stealthTransferring = false;
+        return;
+      }
+
       const res = await fetch('/api/dm-intel/stealth-transfer', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -347,6 +374,7 @@
                   class="px-3 py-2 bg-stone-800 border border-stone-700 rounded-md text-stone-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-600"
                 >
                   <option value="">Transfer to...</option>
+                  <option value="__remove">❌ Take from party (stolen/lost)</option>
                   {#each partyMembers as c}
                     <option value={c.id}>{c.name}</option>
                   {/each}
