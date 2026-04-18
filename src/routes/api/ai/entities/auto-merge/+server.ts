@@ -69,9 +69,16 @@ Return ONLY valid JSON, no markdown.`,
 
   let groups: string[][];
   try {
-    const cleaned = result.content.replace(/```json?\n?/g, '').replace(/```/g, '').trim();
-    groups = JSON.parse(cleaned);
-  } catch {
+    const cleaned = result.content
+      .replace(/```json?\n?/g, '')
+      .replace(/```/g, '')
+      .trim();
+    // Extract JSON array from response (may have leading/trailing text)
+    const arrMatch = cleaned.match(/\[[\s\S]*\]/);
+    if (!arrMatch) throw new Error('No array found');
+    groups = JSON.parse(arrMatch[0]);
+  } catch (e) {
+    console.error('Auto-merge AI parse error:', e, 'Raw:', result.content);
     return json({ error: 'AI returned invalid JSON' }, { status: 500 });
   }
 
