@@ -28,6 +28,20 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const featureNames = features.map(f => f.name).join(', ');
   const mod = (s: number) => Math.floor((s - 10) / 2);
 
+  // Build character narrative context from notes/backstory
+  const narrativeParts: string[] = [];
+  if (sheet.personalityTraits) narrativeParts.push(`Personality: ${sheet.personalityTraits}`);
+  if (sheet.ideals) narrativeParts.push(`Ideals: ${sheet.ideals}`);
+  if (sheet.bonds) narrativeParts.push(`Bonds: ${sheet.bonds}`);
+  if (sheet.flaws) narrativeParts.push(`Flaws: ${sheet.flaws}`);
+  if (sheet.backstory) narrativeParts.push(`Backstory: ${sheet.backstory}`);
+  if (sheet.notes) {
+    // Truncate notes to avoid token bloat — take last 1500 chars
+    const notes = sheet.notes.length > 1500 ? '...' + sheet.notes.slice(-1500) : sheet.notes;
+    narrativeParts.push(`Session Notes: ${notes}`);
+  }
+  const narrativeContext = narrativeParts.length > 0 ? narrativeParts.join('\n') : 'No additional character details.';
+
   const prompt = `You are a D&D 5e expert advisor. A player is leveling up their character and choosing a feat.
 
 Character:
@@ -40,15 +54,18 @@ Character:
 - HP: ${sheet.hpCurrent || 0}/${sheet.hpMax || 0}
 - AC: ${sheet.ac || 'Unknown'}
 
+Character Background & Playstyle:
+${narrativeContext}
+
 Recommend 5 feats that would work well for this character. For each feat provide:
 1. The feat name (official PHB/Tasha/etc name)
-2. A one-sentence reason why it synergizes with this build
+2. A one-sentence reason why it synergizes with this build AND their playstyle
 3. The primary ability score it uses or improves (if any)
 
-Consider: weak saves that need shoring up, ability scores that are close to even numbers, class synergies, playstyle optimization. Prioritize feats that solve actual problems for this specific character.
+Consider: weak saves that need shoring up, ability scores close to even numbers, class synergies, AND the character's personality and observed playstyle from their notes. Prioritize feats that solve actual problems for this specific character and match who they are in the story.
 
 Respond ONLY with a JSON array of objects. No markdown, no explanation. Format:
-[{"name": "Feat Name", "reason": "Why it fits", "stat": "STR/DEX/CON/INT/WIS/CHA/null"}]`;
+[{"name": "Feat Name", "reason": "Why it fits their build AND personality", "stat": "STR/DEX/CON/INT/WIS/CHA/null"}]`;
 
   try {
     const providerConfig: AiProviderConfig = {
