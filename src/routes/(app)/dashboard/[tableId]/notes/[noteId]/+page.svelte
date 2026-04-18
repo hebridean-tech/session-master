@@ -349,6 +349,9 @@
                 {/if}
               </button>
             </div>
+            {#if autoMergeResult}
+              <p class="text-sm mt-2 {autoMergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{autoMergeResult}</p>
+            {/if}
             {#if mergeMode}
                 <div class="mt-2 flex flex-col sm:flex-row gap-2 items-start">
                   <select bind:value={mergeSource} class="flex-1 px-2 py-2 bg-stone-800 border border-stone-700 rounded text-stone-200 text-sm">
@@ -374,9 +377,6 @@
                 </div>
                 {#if mergeResult}
                   <p class="text-sm mt-2 {mergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{mergeResult}</p>
-                {/if}
-                {#if autoMergeResult}
-                  <p class="text-sm mt-2 {autoMergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{autoMergeResult}</p>
                 {/if}
               {/if}
             </div>
