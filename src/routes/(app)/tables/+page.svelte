@@ -14,18 +14,23 @@
     e.preventDefault();
     joinError = '';
     joinSuccess = '';
-    const res = await fetch('/api/join-table', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: inviteCode }),
-    });
-    const json = await res.json();
-    if (json.error) {
-      joinError = json.error;
-    } else {
-      joinSuccess = 'Joined table!';
-      inviteCode = '';
-      window.location.reload();
+    const code = (inviteCode || '').trim();
+    if (!code) { joinError = 'Please enter an invite code.'; return; }
+    try {
+      const res = await fetch('/api/join-table', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        joinError = data.error;
+      } else {
+        joinSuccess = 'Joined table! Redirecting...';
+        setTimeout(() => window.location.reload(), 1000);
+      }
+    } catch (err: any) {
+      joinError = 'Network error: ' + (err.message || 'Check your connection.');
     }
   }
 </script>
