@@ -29,9 +29,17 @@
   let editingId = $state<string | null>(null);
   let form = $state({ itemName: '', itemType: 'wondrous', rarity: 'common', quantity: 1, valueGp: 0, description: '', isHomebrew: false, awardedToCharacterId: '', sourceRef: '', notes: '' });
 
+  // Encounter loot generation
+  let encounterItems = $state<any[]>([]);
+  let encounterGenerating = $state(false);
+  let enemyType = $state('');
+  let encounterHomebrew = $state(false);
+  let encounterPower = $state<string>('balanced');
+  let encounterInstructions = $state('');
+
   // Shop generation
   let shopItems = $state<any[]>([]);
-  let generating = $state(false);
+  let shopGenerating = $state(false);
   let shopPrompt = $state('');
   let shopHomebrew = $state(false);
 
@@ -100,8 +108,43 @@
     form = { itemName: '', itemType: 'wondrous', rarity: 'common', quantity: 1, valueGp: 0, description: '', isHomebrew: false, awardedToCharacterId: '', sourceRef: '', notes: '' };
   }
 
+  async function generateEncounterLoot() {
+    if (!enemyType.trim()) return;
+    encounterGenerating = true;
+    try {
+      const res = await fetch('/api/loot/generate-encounter-loot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableId, enemyType: enemyType.trim(), allowHomebrew: encounterHomebrew, powerLevel: encounterPower, additionalInstructions: encounterInstructions.trim() || undefined }),
+      });
+      const data = await res.json();
+      if (data.items) encounterItems = data.items;
+    } catch (e) { console.error(e); }
+    encounterGenerating = false;
+  }
+
+  async function approveEncounterItem(item: any) {
+    const entry: any = {
+      tableId, category: 'loot',
+      itemName: item.itemName, itemType: item.itemType, rarity: item.rarity,
+      quantity: item.quantity || 1, valueGp: item.valueGp || 0,
+      description: item.description, isHomebrew: item.isHomebrew || false,
+    };
+    if (item.itemType === 'currency' && item.quantity && item.valueGp) {
+      entry.notes = `Total: ${item.quantity} × ${item.valueGp} gp = ${(item.quantity * item.valueGp).toFixed(2)} gp`;
+    }
+    await fetch('/api/loot', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(entry) });
+    encounterItems = encounterItems.filter(i => i !== item);
+    await refresh();
+  }
+
+  async function approveAllEncounterItems() {
+    for (const item of [...encounterItems]) await approveEncounterItem(item);
+    encounterItems = [];
+  }
+
   async function generateShop() {
-    generating = true;
+    shopGenerating = true;
     try {
       const res = await fetch('/api/loot/generate-shop', {
         method: 'POST',
@@ -113,7 +156,7 @@
     } catch (e) {
       console.error(e);
     }
-    generating = false;
+    shopGenerating = false;
   }
 
   async function approveShopItem(item: any) {
@@ -195,6 +238,73 @@
           <option value="yes">Homebrew Only</option>
           <option value="no">Official Only</option>
         </select>
+      </div>
+
+      <!-- Encounter Loot Generator -->
+      <div class="bg-stone-800/50 border border-stone-700 rounded-lg p-4 mb-4">
+        <h3 class="text-amber-400 font-semibold mb-3 text-sm">⚔️ Generate Encounter Loot</h3>
+        <div class="flex flex-wrap gap-3 items-end">
+          <div class="flex-1 min-w-48">
+            <label class="text-xs text-stone-400">Enemy / Creature Type</label>
+            <input bind:value={enemyType} placeholder="e.g. Goblin raiding party, Adult Red Dragon" class="w-full bg-stone-900 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
+          </div>
+          <div>
+            <label class="text-xs text-stone-400">Power Level</label>
+            <select bind:value={encounterPower} class="bg-stone-900 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm">
+              <option value="middling">Middling</option>
+              <option value="balanced">Balanced</option>
+              <option value="exciting">Exciting</option>
+              <option value="overpowered">Overpowered</option>
+            </select>
+          </div>
+          <label class="flex items-center gap-2 text-sm text-stone-300 pb-1">
+            <input type="checkbox" bind:checked={encounterHomebrew} class="accent-amber-600" />
+            Homebrew
+          </label>
+          <button onclick={generateEncounterLoot} disabled={encounterGenerating || !enemyType.trim()} class="px-4 py-2 bg-red-800 hover:bg-red-700 disabled:bg-stone-600 disabled:text-stone-500 text-white rounded text-sm font-medium">
+            {encounterGenerating ? '⏳ Generating...' : '💀 Generate Loot'}
+          </button>
+        </div>
+        <div class="mt-2">
+          <input bind:value={encounterInstructions} placeholder="Additional instructions (optional, e.g. "no potions", "focus on weapons")" class="w-full bg-stone-900 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
+        </div>
+
+        <!-- Generated encounter loot for review -->
+        {#if encounterItems.length > 0}
+          <div class="mt-3 flex items-center justify-between">
+            <h4 class="text-amber-400 text-sm font-semibold">Review Generated Loot ({encounterItems.length} items)</h4>
+            <button onclick={approveAllEncounterItems} class="text-xs text-green-400 hover:text-green-300">✓ Approve All</button>
+          </div>
+          <div class="space-y-2 mt-2">
+            {#each encounterItems as item, i}
+              <div class="bg-stone-900 border border-amber-900/50 rounded-lg p-3 flex items-start gap-3">
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center gap-2 flex-wrap">
+                    <span class="font-medium text-stone-200 text-sm">{item.itemName}</span>
+                    <span class="text-xs px-2 py-0.5 rounded bg-stone-700 text-stone-300">{item.itemType}</span>
+                    <span class="text-xs {RARITY_COLORS[item.rarity] || 'text-stone-400'}">{item.rarity?.replace('_', ' ')}</span>
+                    {#if item.isHomebrew}
+                      <span class="text-xs px-2 py-0.5 rounded bg-purple-900 text-purple-300">Homebrew</span>
+                    {/if}
+                    {#if item.quantity > 1}
+                      <span class="text-xs text-stone-500">×{item.quantity}</span>
+                    {/if}
+                    {#if Number(item.valueGp) > 0}
+                      <span class="text-xs text-amber-500">{item.valueGp} gp</span>
+                    {/if}
+                  </div>
+                  {#if item.description}
+                    <p class="text-xs text-stone-400 mt-1">{item.description}</p>
+                  {/if}
+                </div>
+                <div class="flex gap-1">
+                  <button onclick={() => approveEncounterItem(item)} class="px-2 py-1 text-xs bg-green-800 hover:bg-green-700 text-green-200 rounded">✓</button>
+                  <button onclick={() => encounterItems = encounterItems.filter((_, j) => j !== i)} class="px-2 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">✗</button>
+                </div>
+              </div>
+            {/each}
+          </div>
+        {/if}
       </div>
 
       <!-- Add/Edit Form -->
@@ -308,8 +418,8 @@
             <input type="checkbox" bind:checked={shopHomebrew} class="accent-amber-600" />
             Allow Homebrew
           </label>
-          <button onclick={generateShop} disabled={generating} class="px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-stone-600 disabled:text-stone-500 text-white rounded text-sm font-medium">
-            {generating ? '⏳ Generating...' : '✨ Generate Shop'}
+          <button onclick={generateShop} disabled={shopGenerating} class="px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-stone-600 disabled:text-stone-500 text-white rounded text-sm font-medium">
+            {shopGenerating ? '⏳ Generating...' : '✨ Generate Shop'}
           </button>
         </div>
 
