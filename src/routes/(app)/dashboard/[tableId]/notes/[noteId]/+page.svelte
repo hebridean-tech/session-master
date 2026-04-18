@@ -27,6 +27,9 @@
   let editingEntityId = $state('');
   let editEntityName = $state('');
   let editEntityType = $state('');
+  let splittingId = $state('');
+  let splitSuggestions = $state<any[]>([]);
+  let splitting = $state(false);
   const allEntities = $derived(data?.entities || []);
 
   async function handleClearEntities() {
@@ -69,6 +72,38 @@
       });
       const d = await res.json();
       if (d.success) window.location.reload();
+    } catch { /* ignore */ }
+  }
+
+  async function handleSplit(entity: any) {
+    splittingId = entity.id;
+    splitSuggestions = [];
+    splitting = true;
+    try {
+      const res = await fetch('/api/ai/entities/split', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entityId: entity.id, tableId: data?.table.id }),
+      });
+      const d = await res.json();
+      if (d.success && d.suggestions.length > 0) {
+        splitSuggestions = d.suggestions;
+      } else {
+        splitSuggestions = [];
+      }
+    } catch { /* ignore */ }
+    splitting = false;
+  }
+
+  async function confirmSplit() {
+    try {
+      const res = await fetch('/api/ai/entities/split/apply', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ entityId: splittingId, tableId: data?.table.id, entities: splitSuggestions }),
+      });
+      const d = await res.json();
+      if (d.success) { splittingId = ''; splitSuggestions = []; window.location.reload(); }
     } catch { /* ignore */ }
   }
   let showEntities = $state(true);
@@ -358,6 +393,7 @@
                             {/if}
                             {#if isDm}
                               <button onclick={() => startEditEntity(entity)} class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-stone-200 ml-0.5 transition-opacity" title="Edit">✏️</button>
+                              <button onclick={() => handleSplit(entity)} class="opacity-0 group-hover:opacity-100 text-stone-400 hover:text-stone-200 transition-opacity" title="Split">✂️</button>
                               <button onclick={() => deleteEntity(entity.id)} class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-300 transition-opacity" title="Delete">✕</button>
                             {/if}
                             <!-- Tooltip -->
@@ -376,6 +412,38 @@
               {/if}
             </div>
           </div>
+          <!-- Split Suggestions -->
+          {#if splittingId && splitting}
+            <div class="mt-3 p-3 bg-stone-800/50 border border-amber-900/30 rounded-lg">
+              <p class="text-amber-300 text-sm flex items-center gap-2">
+                <span class="animate-spin inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full"></span>
+                Analyzing entity for split…
+              </p>
+            </div>
+          {/if}
+          {#if splittingId && !splitting && splitSuggestions.length > 0}
+            <div class="mt-3 p-4 bg-stone-800/50 border border-amber-900/30 rounded-lg">
+              <h3 class="text-sm font-semibold text-amber-400 mb-3">✂️ Suggested Split</h3>
+              <p class="text-stone-400 text-xs mb-3">This will replace the original entity with the following:</p>
+              {#each splitSuggestions as s}
+                <div class="flex items-center gap-2 mb-2 p-2 bg-stone-900 rounded border border-stone-700">
+                  <span class="text-xs px-1.5 py-0.5 rounded {entityTypeBadge[s.type] || 'bg-stone-700 text-stone-300'}">{s.type}</span>
+                  <input bind:value={s.name} class="flex-1 px-2 py-1 bg-stone-800 border border-stone-600 rounded text-stone-200 text-sm" />
+                </div>
+              {/each}
+              <div class="flex gap-2 mt-3">
+                <button onclick={confirmSplit} class="px-3 py-1.5 bg-amber-700 hover:bg-amber-600 text-amber-100 text-sm rounded">Apply split</button>
+                <button onclick={() => { splittingId = ''; splitSuggestions = []; }} class="px-3 py-1.5 bg-stone-700 text-stone-300 text-sm rounded">Cancel</button>
+              </div>
+            </div>
+          {/if}
+          {#if splittingId && !splitting && splitSuggestions.length === 0}
+            <div class="mt-3 p-3 bg-stone-800/50 border border-stone-700 rounded-lg">
+              <p class="text-stone-400 text-sm">No split suggestions — this entity doesn't appear to conflate multiple things.</p>
+              <button onclick={() => { splittingId = ''; splitSuggestions = []; }} class="text-xs text-stone-500 hover:text-stone-300 mt-2">Close</button>
+            </div>
+          {/if}
+
           <!-- Entity Merge (DM only) -->
           {#if data?.role === 'dm' && safe_entities.length >= 2}
             <div class="mt-3 flex flex-wrap gap-3">
