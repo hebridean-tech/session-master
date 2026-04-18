@@ -17,6 +17,10 @@
   let stealthRolled = $state(false);
   let stealthRoll = $state(0);
   let stealthNarration = $state('');
+  let stealthHit = $state<any>(null);
+  let stealthTarget = $state('');
+  let stealthTransferring = $state(false);
+  const partyMembers = $derived(data?.characters || []);
 
   // Active tab
   let activeTab = $state<'chat' | 'stealth' | 'loot'>('chat');
@@ -72,12 +76,46 @@
   function rollStealth() {
     stealthRoll = Math.floor(Math.random() * stealthMaxRoll) + 1;
     stealthRolled = true;
+    stealthHit = null;
+    stealthTarget = '';
     const hit = stealthItems.find(i => stealthRoll >= i.rangeStart && stealthRoll <= i.rangeEnd);
     if (hit) {
-      stealthNarration = ` Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — ${hit.name}${hit.magic ? ' (MAGIC ITEM)' : ''} held by ${hit.characterName}!`;
+      stealthHit = hit;
+      stealthNarration = `Rolled ${stealthRoll}: Hit range ${hit.rangeStart}-${hit.rangeEnd} — ${hit.name}${hit.magic ? ' (MAGIC ITEM)' : ''} held by ${hit.characterName}!`;
     } else {
       stealthNarration = `Rolled ${stealthRoll}: Miss — nothing was targeted.`;
     }
+  }
+
+  async function confirmStealthTransfer() {
+    if (!stealthHit || !stealthTarget) return;
+    stealthTransferring = true;
+    try {
+      const sourceChar = partyMembers.find(c => c.name === stealthHit.characterName);
+      if (!sourceChar) { alert('Source character not found'); stealthTransferring = false; return; }
+      const res = await fetch('/api/dm-intel/stealth-transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tableId,
+          sourceCharacterSheetId: sourceChar.id,
+          targetCharacterSheetId: stealthTarget,
+          itemName: stealthHit.name,
+          quantity: stealthHit.quantity || 1,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        stealthNarration += ` → Transferred to ${partyMembers.find(c => c.id === stealthTarget)?.name || 'target'}!`;
+        stealthHit = null;
+        stealthTarget = '';
+      } else {
+        alert('Transfer failed: ' + (data.error || 'Unknown error'));
+      }
+    } catch (e: any) {
+      alert('Error: ' + e.message);
+    }
+    stealthTransferring = false;
   }
 
   // Loot review state
@@ -320,6 +358,36 @@
           {#if stealthNarration}
             <div class="mt-3 p-3 rounded-lg bg-stone-800 border border-stone-700 text-stone-200 text-sm">
               {stealthNarration}
+            </div>
+          {/if}
+
+          {#if stealthHit}
+            <div class="mt-3 p-3 rounded-lg bg-red-950/30 border border-red-900/50">
+              <p class="text-red-300 text-sm font-medium mb-2">🔪 Steal: {stealthHit.name} from {stealthHit.characterName}?</p>
+              <div class="flex flex-col sm:flex-row gap-2 items-start">
+                <select
+                  bind:value={stealthTarget}
+                  class="px-3 py-2 bg-stone-800 border border-stone-700 rounded-md text-stone-100 text-sm focus:outline-none focus:ring-2 focus:ring-red-600"
+                >
+                  <option value="">Transfer to...</option>
+                  {#each partyMembers as c}
+                    <option value={c.id}>{c.name}</option>
+                  {/each}
+                </select>
+                <button
+                  onclick={confirmStealthTransfer}
+                  disabled={!stealthTarget || stealthTransferring}
+                  class="px-4 py-2 bg-red-800 hover:bg-red-700 text-white rounded-md text-sm font-medium disabled:opacity-50 min-h-[44px]"
+                >
+                  {stealthTransferring ? 'Transferring...' : '✅ Confirm Transfer'}
+                </button>
+                <button
+                  onclick={() => { stealthHit = null; stealthTarget = ''; }}
+                  class="px-3 py-2 text-stone-400 text-sm border border-stone-700 rounded hover:text-stone-200"
+                >
+                  Skip
+                </button>
+              </div>
             </div>
           {/if}
         </div>

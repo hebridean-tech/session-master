@@ -1,5 +1,8 @@
 import type { PageServerLoad } from './$types';
 import { getUserTableRole, getTableById } from '$lib/db/queries';
+import { db } from '$lib/db';
+import { characterSheets, user } from '$lib/db/schema';
+import { eq } from 'drizzle-orm';
 import { redirect } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params, locals }) => {
@@ -14,5 +17,15 @@ export const load: PageServerLoad = async ({ params, locals }) => {
   }
 
   const table = await getTableById(tableId);
-  return { table, role: role.role };
+
+  const characters = await db.select({
+    id: characterSheets.id,
+    name: characterSheets.characterName,
+    ownerName: user.name,
+  })
+    .from(characterSheets)
+    .innerJoin(user, eq(characterSheets.userId, user.id))
+    .where(eq(characterSheets.tableId, tableId));
+
+  return { table, role: role.role, characters };
 };
