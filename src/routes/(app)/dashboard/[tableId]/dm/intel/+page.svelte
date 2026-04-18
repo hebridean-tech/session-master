@@ -23,6 +23,7 @@
   let stealthPctRoll = $state(0);
   let stealthPctRolled = $state(false);
   const partyMembers = $derived(data?.characters || []);
+  let stealthTargets = $state<string[]>(partyMembers.map(c => c.id));
 
   // Active tab
   let activeTab = $state<'chat' | 'stealth'>('chat');
@@ -60,7 +61,7 @@
       const res = await fetch('/api/dm-intel/stealth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ tableId, dieType: stealthDie, encounter: stealthEncounter.trim() }),
+        body: JSON.stringify({ tableId, dieType: stealthDie, encounter: stealthEncounter.trim(), targetCharacterIds: stealthTargets }),
       });
       const data = await res.json();
       if (data.error) {
@@ -236,12 +237,42 @@
         </div>
       </div>
 
+      <!-- Target Selection -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <label class="text-sm font-medium text-stone-400">Targets (whose inventory is stealable)</label>
+          <button
+            onclick={() => stealthTargets = stealthTargets.length === partyMembers.length ? [] : partyMembers.map(c => c.id)}
+            class="text-xs text-stone-500 hover:text-stone-300"
+          >
+            {stealthTargets.length === partyMembers.length ? 'Deselect all' : 'Select all'}
+          </button>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          {#each partyMembers as c}
+            <button
+              onclick={() => {
+                stealthTargets = stealthTargets.includes(c.id)
+                  ? stealthTargets.filter(id => id !== c.id)
+                  : [...stealthTargets, c.id];
+              }}
+              class="px-2.5 py-1.5 rounded text-sm border transition-colors min-h-[44px]
+                {stealthTargets.includes(c.id)
+                  ? 'bg-amber-900/40 border-amber-700/50 text-amber-200'
+                  : 'bg-stone-800 border-stone-700 text-stone-500'}"
+            >
+              {stealthTargets.includes(c.id) ? '✓ ' : ''}{c.name}
+            </button>
+          {/each}
+        </div>
+      </div>
+
       <button
         onclick={generateStealthMap}
-        disabled={stealthLoading}
+        disabled={stealthLoading || stealthTargets.length === 0}
         class="px-4 py-2.5 bg-stone-700 hover:bg-stone-600 text-stone-200 rounded-md text-sm font-medium disabled:opacity-50 min-h-[44px]"
       >
-        {stealthLoading ? '🗺️ Mapping items...' : '🗺️ Map Items & Prepare Roll'}
+        {stealthLoading ? '🗺️ Mapping items...' : stealthTargets.length === 0 ? 'Select at least one target' : '🗺️ Map Items & Prepare Roll'}
       </button>
 
       {#if stealthItems.length > 0}

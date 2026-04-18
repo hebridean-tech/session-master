@@ -20,7 +20,7 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
   const session = locals.session;
   if (!session?.user?.id) return json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { tableId, dieType, encounter } = await request.json();
+  const { tableId, dieType, encounter, targetCharacterIds } = await request.json();
   if (!tableId || !dieType) return json({ error: 'Missing fields' }, { status: 400 });
 
   const role = await getUserTableRole(session.user.id, tableId);
@@ -31,14 +31,19 @@ export const POST: RequestHandler = async ({ request, locals, params }) => {
     return json({ error: 'AI not configured for this table' }, { status: 400 });
   }
 
-  // Gather all inventory across the party
-  const sheets = await db.select({
+  // Gather all inventory across selected targets
+  let sheets = await db.select({
     sheet: characterSheets,
     owner: { name: user.name, email: user.email, id: user.id },
   })
     .from(characterSheets)
     .innerJoin(user, eq(characterSheets.userId, user.id))
     .where(eq(characterSheets.tableId, tableId));
+
+  // Filter to only selected targets if specified
+  if (Array.isArray(targetCharacterIds) && targetCharacterIds.length > 0) {
+    sheets = sheets.filter(s => targetCharacterIds.includes(s.sheet.id));
+  }
 
   // Build list of all items with owners
   const allItems: Array<{ name: string; owner: string; characterName: string; quantity: number; magic: boolean; description: string | null; currencyType?: string }> = [];
