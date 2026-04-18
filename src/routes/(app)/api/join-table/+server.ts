@@ -13,10 +13,14 @@ export const POST: RequestHandler = async ({ request, locals }) => {
     return json({ error: 'Invite code required' }, { status: 400 });
   }
 
-  const result = await joinTableByCode(session.user.id, code.toUpperCase());
-  if (!result) {
-    return json({ error: 'Invalid invite code' }, { status: 404 });
+  try {
+    const result = await joinTableByCode(session.user.id, code.toUpperCase());
+    if (!result) {
+      return json({ error: 'Invalid invite code' }, { status: 404 });
+    }
+    return json({ success: true, tableId: result.table.id });
+  } catch (e: any) {
+    console.error('Join table error:', e);
+    return json({ error: 'Failed to join table: ' + (e.message || 'Unknown error') }, { status: 500 });
   }
-
-  return json({ success: true, tableId: result.table.id });
 };

@@ -58,6 +58,15 @@ export async function joinTableByCode(userId: string, code: string) {
 
   if (!table) return null;
 
+  // Check if already a member
+  const [existing] = await db
+    .select()
+    .from(tableMembers)
+    .where(and(eq(tableMembers.tableId, table.id), eq(tableMembers.userId, userId)))
+    .limit(1);
+
+  if (existing) return { table, member: existing };
+
   const [member] = await db
     .insert(tableMembers)
     .values({
