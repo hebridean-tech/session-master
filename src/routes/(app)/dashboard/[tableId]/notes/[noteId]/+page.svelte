@@ -17,6 +17,12 @@
   let summaryError = $state('');
   let extracting = $state(false);
   let extractionError = $state('');
+  let mergeMode = $state(false);
+  let mergeSource = $state('');
+  let mergeTarget = $state('');
+  let mergeResult = $state('');
+  let merging = $state(false);
+  const allEntities = $derived(data?.entities || []);
   let showEntities = $state(true);
 
   const isAuthor = data?.userId === data.note.authorUserId;
@@ -91,6 +97,27 @@
       window.location.reload();
     } catch (e: any) { extractionError = e.message; }
     extracting = false;
+  }
+
+  async function handleMergeEntities() {
+    if (!mergeSource || !mergeTarget || mergeSource === mergeTarget) return;
+    merging = true;
+    mergeResult = '';
+    try {
+      const res = await fetch('/api/ai/entities/merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableId: data?.table.id, entityId: mergeSource, aliasId: mergeTarget }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        mergeResult = `Merged "${d.alias.name}" → "${d.primary.name}"`;
+        mergeSource = '';
+        mergeTarget = '';
+        setTimeout(() => window.location.reload(), 1500);
+      } else { mergeResult = 'Error: ' + (d.error || 'Unknown'); }
+    } catch (e: any) { mergeResult = 'Error: ' + e.message; }
+    merging = false;
   }
 
   const sourceBadge: Record<string, string> = {
@@ -276,6 +303,41 @@
               {/if}
             </div>
           </div>
+          <!-- Entity Merge (DM only) -->
+          {#if data?.role === 'dm' && safe_entities.length >= 2}
+            <div class="mt-3">
+              <button onclick={() => mergeMode = !mergeMode} class="text-xs text-stone-500 hover:text-stone-300">
+                {mergeMode ? '✕ Close merge' : '🔗 Merge entities'}
+              </button>
+              {#if mergeMode}
+                <div class="mt-2 flex flex-col sm:flex-row gap-2 items-start">
+                  <select bind:value={mergeSource} class="flex-1 px-2 py-2 bg-stone-800 border border-stone-700 rounded text-stone-200 text-sm">
+                    <option value="">Primary entity...</option>
+                    {#each allEntities as e}
+                      <option value={e.id}>{e.name} ({e.entityType})</option>
+                    {/each}
+                  </select>
+                  <span class="text-stone-500 text-sm self-center">← merge into</span>
+                  <select bind:value={mergeTarget} class="flex-1 px-2 py-2 bg-stone-800 border border-stone-700 rounded text-stone-200 text-sm">
+                    <option value="">Alias entity...</option>
+                    {#each allEntities as e}
+                      <option value={e.id}>{e.name} ({e.entityType})</option>
+                    {/each}
+                  </select>
+                  <button
+                    onclick={handleMergeEntities}
+                    disabled={!mergeSource || !mergeTarget || merging}
+                    class="px-3 py-2 bg-amber-700 hover:bg-amber-600 text-amber-100 text-sm rounded disabled:opacity-50 min-h-[44px]"
+                  >
+                    {merging ? '...' : 'Merge'}
+                  </button>
+                </div>
+                {#if mergeResult}
+                  <p class="text-sm mt-2 {mergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{mergeResult}</p>
+                {/if}
+              {/if}
+            </div>
+          {/if}
         {/if}
         {#if extractionError && safe_entities.length === 0}
           <div class="mt-4 bg-red-950/30 border border-red-900/50 rounded-lg p-3 text-red-300 text-sm">{extractionError}</div>
