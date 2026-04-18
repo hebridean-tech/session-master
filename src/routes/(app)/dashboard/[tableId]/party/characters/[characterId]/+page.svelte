@@ -172,13 +172,19 @@
       </a>
     {/if}
 
-    <!-- Level Up Button -->
-    {#if canEdit && s.level != null && s.level < 20}
-      <a href="/dashboard/{tableId}/party/characters/{sheetId}/level-up"
-        class="inline-flex items-center gap-2 px-4 py-2 mb-4 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition-colors">
-        ⬆️ Level Up
+    <!-- Action Buttons -->
+    <div class="flex gap-2 mb-4">
+      {#if canEdit && s.level != null && s.level < 20}
+        <a href="/dashboard/{tableId}/party/characters/{sheetId}/level-up"
+          class="inline-flex items-center gap-2 px-4 py-2 bg-amber-600 hover:bg-amber-500 text-white rounded-lg text-sm font-medium transition-colors">
+          ⬆️ Level Up
+        </a>
+      {/if}
+      <a href="/dashboard/{tableId}/party/characters/{sheetId}/combat"
+        class="inline-flex items-center gap-2 px-4 py-2 bg-stone-800 hover:bg-stone-700 text-stone-200 rounded-lg text-sm font-medium transition-colors">
+        ⚔️ Combat
       </a>
-    {/if}
+    </div>
 
     <!-- Tab Bar -->
     <div class="flex gap-1 mb-6 border-b border-stone-800 overflow-x-auto">

@@ -37,13 +37,30 @@
     loading = false;
   }
 
-  // Group features by action type
+  // Map spell casting time to action type
+  function spellActionType(castingTime: string | null | undefined): string {
+    if (!castingTime) return 'action';
+    const ct = castingTime.toLowerCase();
+    if (ct.includes('bonus action')) return 'bonus_action';
+    if (ct.includes('reaction')) return 'reaction';
+    if (ct.includes('1 action') || ct.includes('action') || ct.includes('attack')) return 'action';
+    if (ct.includes('free')) return 'free';
+    if (ct.includes('minute') || ct.includes('hour') || ct.includes('ritual')) return 'special';
+    return 'action';
+  }
+
+  // Group features + spells by action type
   const actionGroups = $derived(() => {
     const groups: Record<string, any[]> = { action: [], bonus_action: [], reaction: [], attack_action: [], free: [], special: [], passive: [] };
     for (const f of features) {
       const key = f.actionType || 'passive';
       if (!groups[key]) groups[key] = [];
-      groups[key].push(f);
+      groups[key].push({ ...f, _type: 'feature' });
+    }
+    for (const sp of spells) {
+      const key = spellActionType(sp.castingTime);
+      if (!groups[key]) groups[key] = [];
+      groups[key].push({ ...sp, _type: 'spell' });
     }
     return groups;
   });
@@ -153,23 +170,31 @@
         <div class="bg-stone-800/50 rounded-lg border border-stone-700/50 p-3">
           <h2 class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-2">{ACTION_LABELS[col]}</h2>
           <div class="space-y-1.5">
-            {#each actionGroups()[col] || [] as feature (feature.id)}
+            {#each actionGroups()[col] || [] as item (item.id)}
               <div class="group relative">
-                <button onclick={() => editingFeature = feature.id} class="text-left w-full text-sm text-stone-200 hover:text-amber-400 transition-colors" title="Click to edit">
-                  {feature.name}
-                  {#if feature.damage}
-                    <span class="text-red-400 ml-1">({feature.damage})</span>
-                  {/if}
-                </button>
-                {#if editingFeature === feature.id}
-                  <div class="absolute top-full left-0 z-20 bg-stone-800 border border-stone-600 rounded p-2 shadow-lg mt-1 w-48">
-                    <select value={feature.actionType} onchange={(e) => updateFeature(feature.id, { actionType: (e.target as HTMLSelectElement).value })} class="w-full bg-stone-900 text-stone-200 text-xs rounded p-1 border border-stone-600 mb-1">
-                      {#each Object.entries(ACTION_LABELS) as [val, label]}
-                        <option value={val}>{label}</option>
-                      {/each}
-                    </select>
-                    <button onclick={() => editingFeature = null} class="text-xs text-stone-400 hover:text-stone-200">Close</button>
+                {#if item._type === 'spell'}
+                  <div class="text-left w-full text-sm text-stone-200">
+                    <span class="text-purple-400" title="Spell (L{item.level ?? 0})">✨</span>
+                    {item.name}
+                    <span class="text-stone-500 text-[10px]">L{item.level ?? 0}{item.castingTime ? ' · ' + item.castingTime : ''}</span>
                   </div>
+                {:else}
+                  <button onclick={() => editingFeature = item.id} class="text-left w-full text-sm text-stone-200 hover:text-amber-400 transition-colors" title="Click to edit">
+                    {item.name}
+                    {#if item.damage}
+                      <span class="text-red-400 ml-1">({item.damage})</span>
+                    {/if}
+                  </button>
+                  {#if editingFeature === item.id}
+                    <div class="absolute top-full left-0 z-20 bg-stone-800 border border-stone-600 rounded p-2 shadow-lg mt-1 w-48">
+                      <select value={item.actionType} onchange={(e) => updateFeature(item.id, { actionType: (e.target as HTMLSelectElement).value })} class="w-full bg-stone-900 text-stone-200 text-xs rounded p-1 border border-stone-600 mb-1">
+                        {#each Object.entries(ACTION_LABELS) as [val, label]}
+                          <option value={val}>{label}</option>
+                        {/each}
+                      </select>
+                      <button onclick={() => editingFeature = null} class="text-xs text-stone-400 hover:text-stone-200">Close</button>
+                    </div>
+                  {/if}
                 {/if}
               </div>
             {/each}
