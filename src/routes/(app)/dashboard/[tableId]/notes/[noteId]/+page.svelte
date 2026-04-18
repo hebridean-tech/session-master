@@ -22,7 +22,34 @@
   let mergeTarget = $state('');
   let mergeResult = $state('');
   let merging = $state(false);
+  let autoMerging = $state(false);
+  let autoMergeResult = $state('');
   const allEntities = $derived(data?.entities || []);
+
+  async function handleAutoMerge() {
+    autoMerging = true;
+    autoMergeResult = '';
+    try {
+      const ids = allEntities.map(e => e.id);
+      const res = await fetch('/api/ai/entities/auto-merge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tableId: data?.table.id, entityIds: ids }),
+      });
+      const d = await res.json();
+      if (d.success) {
+        autoMergeResult = d.merged.length > 0
+          ? `Merged ${d.merged.length} pair(s): ${d.merged.map((m: any) => m.alias + ' → ' + m.primary).join(', ')}`
+          : 'No duplicates found.';
+        setTimeout(() => window.location.reload(), 2000);
+      } else {
+        autoMergeResult = 'Error: ' + (d.error || 'Unknown');
+      }
+    } catch (e: any) {
+      autoMergeResult = 'Error: ' + e.message;
+    }
+    autoMerging = false;
+  }
   let showEntities = $state(true);
 
   const isAuthor = data?.userId === data.note.authorUserId;
@@ -305,11 +332,24 @@
           </div>
           <!-- Entity Merge (DM only) -->
           {#if data?.role === 'dm' && safe_entities.length >= 2}
-            <div class="mt-3">
+            <div class="mt-3 flex flex-wrap gap-3">
               <button onclick={() => mergeMode = !mergeMode} class="text-xs text-stone-500 hover:text-stone-300">
                 {mergeMode ? '✕ Close merge' : '🔗 Merge entities'}
               </button>
-              {#if mergeMode}
+              <button
+                onclick={handleAutoMerge}
+                disabled={autoMerging}
+                class="text-xs px-2.5 py-1 bg-amber-700/40 hover:bg-amber-700/60 text-amber-300 rounded border border-amber-800/40 disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {#if autoMerging}
+                  <span class="animate-spin inline-block w-3 h-3 border-2 border-amber-400 border-t-transparent rounded-full"></span>
+                  Scanning…
+                {:else}
+                  ✨ Auto-merge duplicates
+                {/if}
+              </button>
+            </div>
+            {#if mergeMode}
                 <div class="mt-2 flex flex-col sm:flex-row gap-2 items-start">
                   <select bind:value={mergeSource} class="flex-1 px-2 py-2 bg-stone-800 border border-stone-700 rounded text-stone-200 text-sm">
                     <option value="">Primary entity...</option>
@@ -334,6 +374,9 @@
                 </div>
                 {#if mergeResult}
                   <p class="text-sm mt-2 {mergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{mergeResult}</p>
+                {/if}
+                {#if autoMergeResult}
+                  <p class="text-sm mt-2 {autoMergeResult.startsWith('Error') ? 'text-red-400' : 'text-emerald-400'}">{autoMergeResult}</p>
                 {/if}
               {/if}
             </div>
