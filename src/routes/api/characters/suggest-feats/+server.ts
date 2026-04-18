@@ -78,7 +78,7 @@ Respond ONLY with a JSON array of objects. No markdown, no explanation. Format:
 
     const result = await callAi(providerConfig, [{ role: 'user', content: prompt }]);
     // Parse JSON from response — handle markdown wrapping
-    let clean = result.trim();
+    let clean = result.content.trim();
     if (clean.startsWith('```')) clean = clean.replace(/^```(?:json)?\n?/, '').replace(/\n?```$/, '');
     const feats = JSON.parse(clean);
 
