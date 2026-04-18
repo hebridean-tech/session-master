@@ -58,24 +58,19 @@ export const POST: RequestHandler = async ({ request, locals }) => {
       } catch { /* fallback to primary summary */ }
     }
 
-    // Update alias entity to point to primary as an alias
-    await db.update(extractedEntities).set({
-      name: alias.name, // keep original alias name for reference
-      summary: mergedSummary,
-      metadataJson: { ...((alias.metadataJson as Record<string, any>) || {}), aliasOf: primary.id, aliasOfName: primary.name },
-      confidence: Math.max(Number(primary.confidence) || 0.5, Number(alias.confidence) || 0.5),
-    }).where(eq(extractedEntities.id, aliasId));
-
-    // Also update primary with merged info
+    // Update primary with merged info
     await db.update(extractedEntities).set({
       summary: mergedSummary,
       metadataJson: { ...((primary.metadataJson as Record<string, any>) || {}), mergedWith: aliasId, mergedWithName: alias.name },
     }).where(eq(extractedEntities.id, entityId));
 
+    // Delete the alias entity
+    await db.delete(extractedEntities).where(eq(extractedEntities.id, aliasId));
+
     return json({
       success: true,
       primary: { id: entityId, name: mergedName, summary: mergedSummary },
-      alias: { id: aliasId, name: alias.name, aliasOf: primary.name },
+      deleted: { id: aliasId, name: alias.name },
     });
   } catch (e: any) {
     return json({ error: e.message || 'Database error' }, { status: 500 });
