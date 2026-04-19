@@ -37,6 +37,7 @@
   let spellSuggesting = $state(false);
   let spellSuggestError = $state('');
   let spellsToAdd = $state<Set<string>>(new Set());
+  let spellBudget = $state('');
   // Step 3: ASI
   let asiMode = $state<'stats' | 'feat' | null>(null);
   let asiStats = $state<Record<string, number>>({});
@@ -67,7 +68,7 @@
       });
       const d = await resp.json();
       if (d.error) { spellSuggestError = d.error; }
-      else { spellSuggestions = d.spells || []; spellsToAdd = new Set(); }
+      else { spellSuggestions = d.spells || []; spellBudget = d.budget || ''; spellsToAdd = new Set(); }
     } catch (e: any) { spellSuggestError = e.message; }
     spellSuggesting = false;
   }
@@ -577,6 +578,12 @@
             </div>
             {#if spellSuggestError}
               <p class="text-xs text-red-400 mb-3">{spellSuggestError}</p>
+            {/if}
+            {#if spellBudget}
+              <div class="mb-3 px-3 py-2 bg-stone-800/50 border border-amber-900/30 rounded text-xs text-stone-300">
+                <span class="text-amber-400 font-semibold">📜 Spell Budget:</span>
+                <pre class="mt-1 whitespace-pre-wrap font-sans">{spellBudget}</pre>
+              </div>
             {/if}
             {#if spellSuggestions.length > 0}
               <div class="space-y-2 mb-3">
