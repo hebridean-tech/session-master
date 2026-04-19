@@ -1,6 +1,6 @@
 import { redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
-import { updateCharacterSheet, getCharacterSheetById } from '$lib/db/queries';
+import { updateCharacterSheet, getCharacterSheetById, getTableMembers } from '$lib/db/queries';
 import { db } from '$lib/db';
 import { characterSpells, spellSlots, inventoryItems, characterCurrency } from '$lib/db/schema';
 import { eq } from 'drizzle-orm';
@@ -21,8 +21,11 @@ export const load: PageServerLoad = async ({ params, locals, parent }) => {
       db.select().from(characterCurrency).where(eq(characterCurrency.characterSheetId, params.characterId)),
     ]);
 
+    const members = await getTableMembers(params.tableId);
+
     return {
       sheet: sheet.sheet, canEdit, userName: sheet.user.name, partyLevel, isDm: pd.role === 'dm',
+      members,
       spells, spellSlots: slots, inventory: items,
       currency: currencyRows[0] || { characterSheetId: params.characterId, cp: 0, sp: 0, ep: 0, gp: 0, pp: 0 },
     };

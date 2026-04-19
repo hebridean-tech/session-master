@@ -6,6 +6,11 @@
   let dmNotesEditing = $state(false);
   let showDelete = $state(false);
   let deleting = $state(false);
+  let showTransfer = $state(false);
+  let transferring = $state(false);
+  let transferTargetId = $state('');
+  let transferError = $state('');
+  const members = $derived(data?.members || []);
   let pdfParsing = $state(false);
   let pdfParsed = $state(false);
   let pdfApplying = $state(false);
@@ -50,6 +55,22 @@
       alert('Delete failed: ' + (data.error || 'Unknown error'));
     }
     deleting = false;
+  }
+
+  async function handleTransfer() {
+    if (!transferTargetId) return;
+    transferring = true;
+    transferError = '';
+    try {
+      const resp = await fetch('/api/characters/transfer', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterSheetId: sheetId, targetUserId: transferTargetId, tableId }),
+      });
+      const d = await resp.json();
+      if (d.error) { transferError = d.error; }
+      else { window.location.reload(); }
+    } catch (e: any) { transferError = e.message; }
+    transferring = false;
   }
 
   async function handlePdfReupload(e: Event) {
@@ -194,6 +215,28 @@
           <button onclick={() => editing = !editing} class="px-3 py-1.5 text-xs text-stone-300 hover:text-white border border-stone-700 rounded hover:border-stone-500 transition-colors">
             {editing ? '✕ Cancel' : '✏️ Edit'}
           </button>
+        {/if}
+        {#if isDm && !showDelete && !showTransfer}
+          <button onclick={() => showTransfer = true} class="px-3 py-1.5 text-xs text-amber-400 hover:text-amber-300 border border-amber-900/50 rounded">Transfer</button>
+        {/if}
+        {#if showTransfer}
+          <div class="flex items-center gap-2">
+            <select bind:value={transferTargetId} class="text-xs bg-stone-800 border border-stone-600 text-stone-200 rounded px-2 py-1.5">
+              <option value="">Select user...</option>
+              {#each members as m}
+                {#if m.user.id !== s.userId}
+                  <option value={m.user.id}>{m.user.name || m.user.email}</option>
+                {/if}
+              {/each}
+            </select>
+            <button onclick={handleTransfer} disabled={transferring || !transferTargetId} class="px-3 py-1.5 text-xs bg-amber-700 hover:bg-amber-800 text-white rounded disabled:opacity-50">
+              {transferring ? '…' : 'Confirm'}
+            </button>
+            <button onclick={() => { showTransfer = false; transferError = ''; }} class="px-3 py-1.5 text-xs text-stone-300 border border-stone-700 rounded">Cancel</button>
+          </div>
+          {#if transferError}
+            <p class="text-xs text-red-400 mt-1">{transferError}</p>
+          {/if}
         {/if}
         {#if canEdit && !showDelete}
           <button onclick={() => showDelete = true} class="px-3 py-1.5 text-xs text-red-400 hover:text-red-300 border border-red-900/50 rounded">Delete</button>
