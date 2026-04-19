@@ -31,6 +31,12 @@
   let featSuggestions = $state<any[]>([]);
   let featSuggesting = $state(false);
   let featSuggestError = $state('');
+
+  // AI spell suggestions
+  let spellSuggestions = $state<any[]>([]);
+  let spellSuggesting = $state(false);
+  let spellSuggestError = $state('');
+  let spellsToAdd = $state<Set<string>>(new Set());
   // Step 3: ASI
   let asiMode = $state<'stats' | 'feat' | null>(null);
   let asiStats = $state<Record<string, number>>({});
@@ -49,6 +55,39 @@
       else { featSuggestions = d.feats || []; }
     } catch (e: any) { featSuggestError = e.message; }
     featSuggesting = false;
+  }
+
+  async function suggestSpells() {
+    spellSuggesting = true;
+    spellSuggestError = '';
+    try {
+      const resp = await fetch('/api/characters/suggest-spells', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterSheetId: characterId, tableId }),
+      });
+      const d = await resp.json();
+      if (d.error) { spellSuggestError = d.error; }
+      else { spellSuggestions = d.spells || []; spellsToAdd = new Set(); }
+    } catch (e: any) { spellSuggestError = e.message; }
+    spellSuggesting = false;
+  }
+
+  function toggleSpellToAdd(name: string) {
+    const next = new Set(spellsToAdd);
+    if (next.has(name)) next.delete(name); else next.add(name);
+    spellsToAdd = next;
+  }
+
+  async function addSuggestedSpells() {
+    for (const spell of spellSuggestions) {
+      if (!spellsToAdd.has(spell.name)) continue;
+      await fetch('/api/characters/spells', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterSheetId: characterId, name: spell.name, level: spell.level || 0, school: spell.school || '', source: 'level_up' }),
+      });
+    }
+    spellSuggestions = [];
+    spellsToAdd = new Set();
   }
 
   function selectFeat(name: string) { featName = name; }
@@ -527,6 +566,51 @@
               class="w-4 h-4 rounded border-stone-600 bg-stone-800 text-amber-500 focus:ring-amber-500/30" />
             <span class="text-stone-300 text-sm">Spell slots look correct</span>
           </label>
+
+          <!-- AI Spell Suggestions -->
+          <div class="mt-6 pt-6 border-t border-stone-800">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-sm font-semibold text-amber-400">✨ AI Spell Suggestions</h3>
+              <button onclick={suggestSpells} disabled={spellSuggesting} class="px-3 py-1.5 text-xs bg-amber-800 hover:bg-amber-700 disabled:bg-stone-700 disabled:text-stone-500 text-white rounded">
+                {spellSuggesting ? '⏳ Thinking...' : 'Suggest Spells'}
+              </button>
+            </div>
+            {#if spellSuggestError}
+              <p class="text-xs text-red-400 mb-3">{spellSuggestError}</p>
+            {/if}
+            {#if spellSuggestions.length > 0}
+              <div class="space-y-2 mb-3">
+                {#each spellSuggestions as spell}
+                  <label class="flex items-start gap-3 p-3 rounded-lg border border-stone-800 bg-stone-800/30 cursor-pointer hover:bg-stone-800/60 transition-colors">
+                    <input type="checkbox" checked={spellsToAdd.has(spell.name)} onchange={() => toggleSpellToAdd(spell.name)}
+                      class="mt-0.5 w-4 h-4 rounded border-stone-600 bg-stone-800 text-amber-500 focus:ring-amber-500/30" />
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 flex-wrap">
+                        <span class="text-stone-200 text-sm font-medium">{spell.name}</span>
+                        <span class="text-xs px-1.5 py-0.5 rounded bg-stone-700 text-stone-400">
+                          {spell.level === 0 ? 'Cantrip' : spell.level + 'th' + '-Level'}
+                        </span>
+                        {#if spell.school}
+                          <span class="text-xs text-stone-500">{spell.school}</span>
+                        {/if}
+                        {#if spell.mustHave}
+                          <span class="text-xs px-1.5 py-0.5 rounded bg-amber-900/50 text-amber-400">⭐ Must-have</span>
+                        {/if}
+                      </div>
+                      {#if spell.reason}
+                        <p class="text-xs text-stone-400 mt-1">{spell.reason}</p>
+                      {/if}
+                    </div>
+                  </label>
+                {/each}
+              </div>
+              {#if spellsToAdd.size > 0}
+                <button onclick={addSuggestedSpells} class="px-4 py-2 text-sm bg-green-800 hover:bg-green-700 text-green-200 rounded">
+                  + Add {spellsToAdd.size} Selected Spells
+                </button>
+              {/if}
+            {/if}
+          </div>
         </div>
 
       {:else if visibleSteps[step]?.id === 'features'}
