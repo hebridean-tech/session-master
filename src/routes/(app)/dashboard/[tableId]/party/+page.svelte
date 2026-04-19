@@ -2,8 +2,26 @@
   let { data } = $props();
   const safe_sheets = $derived(data?.sheets);
   const partyLevel = $derived(data?.partyLevel ?? 1);
+  const isDm = $derived(data?.role === 'dm');
+  const members = $derived(data?.members || []);
   let editingLevel = $state(false);
   let levelInput = $state(partyLevel);
+  let transferringId = $state<string | null>(null);
+  let transferMsg = $state('');
+
+  async function transferCharacter(sheetId: string, targetUserId: string) {
+    const tableId = window.location.pathname.split('/')[2];
+    try {
+      const resp = await fetch('/api/characters/transfer', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ characterSheetId: sheetId, targetUserId, tableId }),
+      });
+      const d = await resp.json();
+      if (d.error) { transferMsg = d.error; }
+      else { window.location.reload(); }
+    } catch (e: any) { transferMsg = e.message; }
+    transferringId = null;
+  }
 
   async function saveLevel() {
     try {
@@ -51,6 +69,13 @@
       </div>
     </div>
 
+    {#if transferMsg}
+      <div class="mb-4 px-4 py-2 bg-red-900/50 border border-red-800 rounded text-red-300 text-sm flex items-center justify-between">
+        {transferMsg}
+        <button onclick={() => transferMsg = ''} class="text-red-400 hover:text-red-200">✕</button>
+      </div>
+    {/if}
+
     {#if safe_sheets.length === 0}
       <div class="bg-stone-900 border border-stone-800 rounded-lg p-8 text-center">
         <p class="text-stone-500">No characters yet.</p>
@@ -74,6 +99,22 @@
               <div class="flex flex-col items-end gap-1">
                 {#if levelMismatch}
                   <span class="px-2 py-0.5 bg-emerald-900/50 text-emerald-400 text-xs rounded-full">⬆️ Level Up!</span>
+                {/if}
+                {#if isDm && transferringId === sheet.id}
+                  <div class="flex items-center gap-1">
+                    <select id="transfer-{sheet.id}" class="text-xs bg-stone-800 border border-stone-600 text-stone-200 rounded px-1 py-0.5">
+                      <option value="">Select user...</option>
+                      {#each members as m}
+                        {#if m.user.id !== sheet.userId}
+                          <option value={m.user.id}>{m.user.name || m.user.email}</option>
+                        {/if}
+                      {/each}
+                    </select>
+                    <button onclick={(e) => { e.stopPropagation(); const sel = document.getElementById('transfer-{sheet.id}') as HTMLSelectElement; if (sel?.value) transferCharacter(sheet.id, sel.value); else transferringId = null; }} class="text-xs text-green-400 hover:text-green-300">✓</button>
+                    <button onclick={(e) => { e.stopPropagation(); transferringId = null; }} class="text-xs text-stone-500 hover:text-stone-300">✕</button>
+                  </div>
+                {:else if isDm}
+                  <button onclick={(e) => { e.stopPropagation(); transferringId = sheet.id; }} class="text-xs text-stone-500 hover:text-amber-400" title="Transfer character">🔄</button>
                 {/if}
                 <span class="text-stone-600 text-sm">→</span>
               </div>
