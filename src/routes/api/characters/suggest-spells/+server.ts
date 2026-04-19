@@ -107,15 +107,19 @@ export const POST: RequestHandler = async ({ request, locals }) => {
   const casterTypes = [...new Set(classes.filter(c => c.casterType).map(c => c.casterType))].join(', ');
   const newLevel = sheet.level + 1;
 
-  // Compute spells gained for each class
-  let spellsBudgetStr = '';
+  // Compute spells budget for prompt context
+  let budgetContext = '';
   for (const cls of classes) {
     if (!cls.casterType) continue;
-    const info = getSpellsGainedAtLevelSimple(cls.className, cls.classLevel, cls.classLevel + (cls.className.toLowerCase() === sheet.characterClass?.toLowerCase() ? 1 : 0));
-    spellsBudgetStr += `\n- ${cls.className}${cls.subclass ? ` (${cls.subclass})` : ''} (level ${cls.classLevel} → ${cls.classLevel + (cls.className.toLowerCase() === sheet.characterClass?.toLowerCase() ? 1 : 0)}): `;
-    if (info.cantripsGained > 0) spellsBudgetStr += `+${info.cantripsGained} cantrip(s), `;
-    spellsBudgetStr += `can learn up to ${info.newSpellsAvailable} new spell(s) (total known: ${info.totalSpellsKnownNew}), max spell level: ${info.maxSpellLevel}`;
-  }
+    const isLeveling = cls.className.toLowerCase() === (sheet.characterClass || '').toLowerCase();
+    if (!isLeveling) continue;
+    const table = SPELLS_KNOWN[cls.className.toLowerCase()];
+    if (!table) continue;
+    const oldD = table[cls.classLevel] || {};
+    const newD = table[cls.classLevel + 1] || {};
+    const cantrips = (newD.cantripsKnown || oldD.cantripsKnown || 0) - (oldD.cantripsKnown || 0);
+    const spells = (newD.spellsKnown || 0) - (oldD.spellsKnown || 0);
+ budgetContext = `This level up grants: ${cantrips > 0 ? cantrips + ' new cantrip(s) and ' : ''}${spells} new spell(s).`;
 
   const prompt = `You are a D&D 5e expert advisor helping a player choose spells upon leveling up.
 
@@ -126,12 +130,12 @@ Character:
 - Caster Type(s): ${casterTypes || 'Unknown'}
 - Ability Scores: ${JSON.stringify(sheet.abilityScoresJson)}
 
-Spells Available at This Level Up:${spellsBudgetStr || '\n(No prepared spells known table found for this class — use best judgment)'}
+Spells Available at This Level Up: ${budgetContext || 'No spells-known table found for this class.'}
 
 Existing Spells (${existingNames.length}): ${existingNames.join(', ') || 'None'}
 ${sheet.backstory ? `Backstory/Notes: ${sheet.backstory.substring(0, 500)}` : ''}
 
-IMPORTANT: Only recommend the number of spells the character can actually learn at this level. If they gain 2 new spells, recommend exactly 2. If they gain 1 cantrip and 2 spells, recommend 1 cantrip and 2 spells. Clearly state the budget in your response.
+IMPORTANT: Generate a POOL of 10-15 good spell options for the player to choose from. The player knows exactly how many spells they can learn and will pick from your suggestions. Do NOT limit yourself to the exact number of new spells — give them options.
 
 For each spell provide:
 1. The official spell name
@@ -165,7 +169,7 @@ Respond ONLY with a JSON array. No markdown. Format:
     const spells = JSON.parse(clean);
 
     if (!Array.isArray(spells)) return json({ error: 'Invalid response' }, { status: 500 });
-    return json({ spells, budget: spellsBudgetStr });
+    return json({ spells });
   } catch (e: any) {
     return json({ error: e.message || 'AI request failed' }, { status: 500 });
   }

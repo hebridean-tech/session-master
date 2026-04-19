@@ -37,7 +37,36 @@
   let spellSuggesting = $state(false);
   let spellSuggestError = $state('');
   let spellsToAdd = $state<Set<string>>(new Set());
-  let spellBudget = $state('');
+
+  // D&D 5e spells known table
+  const SPELLS_KNOWN_TABLE: Record<string, Record<number, { cantripsKnown?: number; spellsKnown: number }>> = {
+    bard: {1:{cantripsKnown:2,spellsKnown:4},2:{spellsKnown:5},3:{spellsKnown:6},4:{spellsKnown:7},5:{spellsKnown:8},6:{spellsKnown:9},7:{spellsKnown:10},8:{spellsKnown:11},9:{spellsKnown:12},10:{cantripsKnown:3,spellsKnown:14},11:{spellsKnown:15},12:{spellsKnown:15},13:{spellsKnown:16},14:{spellsKnown:16},15:{spellsKnown:17},16:{spellsKnown:17},17:{spellsKnown:18},18:{spellsKnown:18},19:{spellsKnown:19},20:{spellsKnown:20}},
+    cleric: {1:{cantripsKnown:3,spellsKnown:5},2:{spellsKnown:6},3:{spellsKnown:8},4:{spellsKnown:10},5:{spellsKnown:12},6:{spellsKnown:14},7:{spellsKnown:15},8:{spellsKnown:16},9:{spellsKnown:17},10:{cantripsKnown:4,spellsKnown:18},11:{spellsKnown:19},12:{spellsKnown:19},13:{spellsKnown:20},14:{spellsKnown:20},15:{spellsKnown:21},16:{spellsKnown:21},17:{spellsKnown:22},18:{spellsKnown:22},19:{spellsKnown:23},20:{spellsKnown:23}},
+    druid: {1:{cantripsKnown:2,spellsKnown:4},2:{spellsKnown:5},3:{spellsKnown:6},4:{spellsKnown:7},5:{spellsKnown:8},6:{spellsKnown:9},7:{spellsKnown:10},8:{spellsKnown:11},9:{spellsKnown:12},10:{cantripsKnown:3,spellsKnown:14},11:{spellsKnown:15},12:{spellsKnown:15},13:{spellsKnown:16},14:{spellsKnown:16},15:{spellsKnown:17},16:{spellsKnown:17},17:{spellsKnown:18},18:{spellsKnown:18},19:{spellsKnown:19},20:{spellsKnown:19}},
+    sorcerer: {1:{cantripsKnown:4,spellsKnown:2},2:{spellsKnown:3},3:{spellsKnown:4},4:{spellsKnown:5},5:{spellsKnown:6},6:{spellsKnown:7},7:{spellsKnown:8},8:{spellsKnown:9},9:{spellsKnown:10},10:{cantripsKnown:5,spellsKnown:11},11:{spellsKnown:12},12:{spellsKnown:12},13:{spellsKnown:13},14:{spellsKnown:13},15:{spellsKnown:14},16:{spellsKnown:14},17:{spellsKnown:15},18:{spellsKnown:15},19:{spellsKnown:15},20:{spellsKnown:15}},
+    warlock: {1:{cantripsKnown:2,spellsKnown:2},2:{spellsKnown:3},3:{spellsKnown:4},4:{spellsKnown:5},5:{spellsKnown:6},6:{spellsKnown:7},7:{spellsKnown:8},8:{spellsKnown:9},9:{spellsKnown:10},10:{cantripsKnown:3,spellsKnown:10},11:{spellsKnown:11},12:{spellsKnown:11},13:{spellsKnown:12},14:{spellsKnown:12},15:{spellsKnown:13},16:{spellsKnown:13},17:{spellsKnown:14},18:{spellsKnown:14},19:{spellsKnown:15},20:{spellsKnown:15}},
+    wizard: {1:{cantripsKnown:3,spellsKnown:6},2:{spellsKnown:7},3:{spellsKnown:8},4:{spellsKnown:9},5:{spellsKnown:10},6:{spellsKnown:11},7:{spellsKnown:12},8:{spellsKnown:13},9:{spellsKnown:14},10:{cantripsKnown:4,spellsKnown:15},11:{spellsKnown:16},12:{spellsKnown:16},13:{spellsKnown:17},14:{spellsKnown:17},15:{spellsKnown:18},16:{spellsKnown:18},17:{spellsKnown:19},18:{spellsKnown:19},19:{spellsKnown:20},20:{spellsKnown:20}},
+    artificer: {1:{cantripsKnown:2,spellsKnown:4},2:{spellsKnown:5},3:{spellsKnown:6},4:{spellsKnown:7},5:{spellsKnown:8},6:{spellsKnown:9},7:{spellsKnown:10},8:{spellsKnown:11},9:{spellsKnown:12},10:{cantripsKnown:3,spellsKnown:14},11:{spellsKnown:15},12:{spellsKnown:15},13:{spellsKnown:16},14:{spellsKnown:16},15:{spellsKnown:17},16:{spellsKnown:17},17:{spellsKnown:18},18:{spellsKnown:18},19:{spellsKnown:19},20:{spellsKnown:19}},
+    paladin: {2:{spellsKnown:5},3:{spellsKnown:6},4:{spellsKnown:7},5:{spellsKnown:8},6:{spellsKnown:9},7:{spellsKnown:10},8:{spellsKnown:11},9:{spellsKnown:12},10:{spellsKnown:13},11:{spellsKnown:14},12:{spellsKnown:14},13:{spellsKnown:15},14:{spellsKnown:15},15:{spellsKnown:16},16:{spellsKnown:16},17:{spellsKnown:17},18:{spellsKnown:17},19:{spellsKnown:18},20:{spellsKnown:18}},
+    ranger: {2:{spellsKnown:4},3:{spellsKnown:5},4:{spellsKnown:6},5:{spellsKnown:7},6:{spellsKnown:8},7:{spellsKnown:9},8:{spellsKnown:10},9:{spellsKnown:11},10:{spellsKnown:12},11:{spellsKnown:13},12:{spellsKnown:13},13:{spellsKnown:14},14:{spellsKnown:14},15:{spellsKnown:15},16:{spellsKnown:15},17:{spellsKnown:16},18:{spellsKnown:16},19:{spellsKnown:17},20:{spellsKnown:17}},
+  };
+
+  const spellBudget = $derived(() => {
+    if (!levelData) return [];
+    const cls = (levelData.characterClass || '').toLowerCase();
+    const table = SPELLS_KNOWN_TABLE[cls];
+    if (!table) return [];
+    const oldLvl = levelData.currentLevel;
+    const newLvl = levelData.newLevel;
+    const oldData = table[oldLvl] || {};
+    const newData = table[newLvl] || {};
+    const items: { type: string; count: number }[] = [];
+    const cantripsGained = (newData.cantripsKnown || oldData.cantripsKnown || 0) - (oldData.cantripsKnown || 0);
+    if (cantripsGained > 0) items.push({ type: 'Cantrips', count: cantripsGained });
+    const spellsGained = (newData.spellsKnown || 0) - (oldData.spellsKnown || 0);
+    if (spellsGained > 0) items.push({ type: 'Spells', count: spellsGained });
+    return items;
+  });
   // Step 3: ASI
   let asiMode = $state<'stats' | 'feat' | null>(null);
   let asiStats = $state<Record<string, number>>({});
@@ -68,7 +97,7 @@
       });
       const d = await resp.json();
       if (d.error) { spellSuggestError = d.error; }
-      else { spellSuggestions = d.spells || []; spellBudget = d.budget || ''; spellsToAdd = new Set(); }
+      else { spellSuggestions = d.spells || []; spellsToAdd = new Set(); }
     } catch (e: any) { spellSuggestError = e.message; }
     spellSuggesting = false;
   }
@@ -568,22 +597,33 @@
             <span class="text-stone-300 text-sm">Spell slots look correct</span>
           </label>
 
+          <!-- Spell Budget -->
+          <div class="mt-6 pt-6 border-t border-stone-800">
+            <h3 class="text-sm font-semibold text-amber-400 mb-2">📜 Spells You Can Learn</h3>
+            {#if spellBudget().length > 0}
+              <div class="flex flex-wrap gap-3 mb-3">
+                {#each spellBudget() as b}
+                  <span class="px-3 py-1.5 bg-amber-900/30 border border-amber-800/50 rounded text-sm text-amber-300">
+                    <span class="font-bold">{b.count}×</span> {b.type}
+                  </span>
+                {/each}
+              </div>
+              <p class="text-xs text-stone-500">You can learn this many new spells/cantrips at level {levelData.newLevel}.</p>
+            {:else}
+              <p class="text-xs text-stone-500">No new spells or cantrips gained at this level.</p>
+            {/if}
+          </div>
+
           <!-- AI Spell Suggestions -->
           <div class="mt-6 pt-6 border-t border-stone-800">
             <div class="flex items-center justify-between mb-3">
-              <h3 class="text-sm font-semibold text-amber-400">✨ AI Spell Suggestions</h3>
+              <h3 class="text-sm font-semibold text-amber-400">✨ Spell Suggestions</h3>
               <button onclick={suggestSpells} disabled={spellSuggesting} class="px-3 py-1.5 text-xs bg-amber-800 hover:bg-amber-700 disabled:bg-stone-700 disabled:text-stone-500 text-white rounded">
                 {spellSuggesting ? '⏳ Thinking...' : 'Suggest Spells'}
               </button>
             </div>
             {#if spellSuggestError}
               <p class="text-xs text-red-400 mb-3">{spellSuggestError}</p>
-            {/if}
-            {#if spellBudget}
-              <div class="mb-3 px-3 py-2 bg-stone-800/50 border border-amber-900/30 rounded text-xs text-stone-300">
-                <span class="text-amber-400 font-semibold">📜 Spell Budget:</span>
-                <pre class="mt-1 whitespace-pre-wrap font-sans">{spellBudget}</pre>
-              </div>
             {/if}
             {#if spellSuggestions.length > 0}
               <div class="space-y-2 mb-3">
