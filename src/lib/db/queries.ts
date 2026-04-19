@@ -876,6 +876,7 @@ export async function createLootEntry(data: {
   awardedToCharacterId?: string;
   createdByUserId: string;
   notes?: string;
+  shopName?: string;
 }) {
   const [entry] = await db.insert(lootEntries).values({
     tableId: data.tableId,
@@ -891,6 +892,7 @@ export async function createLootEntry(data: {
     awardedToCharacterId: data.awardedToCharacterId || null,
     createdByUserId: data.createdByUserId,
     notes: data.notes || null,
+    shopName: data.shopName || null,
   }).returning();
   return entry;
 }

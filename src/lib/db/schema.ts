@@ -496,6 +496,7 @@ export const lootEntries = pgTable('loot_entries', {
   description: text('description'),
   isHomebrew: boolean('is_homebrew').notNull().default(false),
   sourceRef: varchar('source_ref', { length: 255 }),
+  shopName: varchar('shop_name', { length: 255 }),
   awardedToCharacterId: uuid('awarded_to_character_id').references(() => characterSheets.id, { onDelete: 'set null' }),
   createdByUserId: text('created_by_user_id').notNull().references(() => user.id, { onDelete: 'cascade' }),
   notes: text('notes'),

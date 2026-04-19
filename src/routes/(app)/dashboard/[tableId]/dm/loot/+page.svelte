@@ -3,6 +3,8 @@
 
   let { data } = $props();
 
+  onMount(() => { loadSavedShops(); });
+
   const RARITIES = ['common', 'uncommon', 'rare', 'very_rare', 'legendary', 'mundane'];
   const ITEM_TYPES = ['weapon', 'armor', 'potion', 'wondrous', 'ring', 'scroll', 'wand', 'rod', 'staff', 'tool', 'gear', 'other'];
   const RARITY_COLORS: Record<string, string> = {
@@ -42,6 +44,10 @@
   let shopGenerating = $state(false);
   let shopPrompt = $state('');
   let shopHomebrew = $state(false);
+  let newShopName = $state('');
+  let shopSaving = $state(false);
+  let savedShops = $state<{ name: string; items: any[] }[]>([]);
+  let expandedShop = $state(-1);
 
   // Chat
   let chatMessages = $state<{ role: string; content: string }[]>([]);
@@ -159,24 +165,43 @@
     shopGenerating = false;
   }
 
-  async function approveShopItem(item: any) {
-    await fetch('/api/loot', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        tableId,
-        category: 'shop',
-        itemName: item.itemName,
-        itemType: item.itemType,
-        rarity: item.rarity,
-        quantity: item.quantity || 1,
-        valueGp: item.valueGp || 0,
-        description: item.description,
-        isHomebrew: item.isHomebrew || false,
-      }),
+  async function saveAllAsShop() {
+    if (!newShopName.trim() || shopItems.length === 0) return;
+    shopSaving = true;
+    try {
+      for (const item of shopItems) {
+        await fetch('/api/loot', {
+          method: 'POST', headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tableId, category: 'shop', shopName: newShopName.trim(),
+            itemName: item.itemName, itemType: item.itemType, rarity: item.rarity,
+            quantity: item.quantity || 1, valueGp: item.valueGp || 0,
+            description: item.description, isHomebrew: item.isHomebrew || false,
+          }),
+        });
+      }
+      shopItems = [];
+      newShopName = '';
+      await refresh();
+      await loadSavedShops();
+    } catch (e) { console.error(e); }
+    shopSaving = false;
+  }
+
+  async function loadSavedShops() {
+    try {
+      const res = await fetch(`/api/loot/shops?tableId=${tableId}`);
+      const data = await res.json();
+      if (data.shops) savedShops = data.shops;
+    } catch (e) { console.error(e); }
+  }
+
+  async function deleteShop(name: string) {
+    await fetch('/api/loot/shops', {
+      method: 'DELETE', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tableId, shopName: name }),
     });
-    shopItems = shopItems.filter(i => i !== item);
-    await refresh();
+    await loadSavedShops();
   }
 
   async function sendChat() {
@@ -413,10 +438,11 @@
       <!-- Shops Tab -->
       <div class="mb-6">
         <div class="flex items-center gap-3 mb-3 flex-wrap">
-          <input bind:value={shopPrompt} placeholder="Shop type / location hint (e.g. 'magic shop in a mountain town')" class="flex-1 min-w-60 bg-stone-800 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
+          <input bind:value={shopPrompt} placeholder='Shop type / location hint (e.g. "magic shop in a mountain town")' class="flex-1 min-w-60 bg-stone-800 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
+          <input bind:value={newShopName} placeholder="Shop name" class="w-48 bg-stone-800 border border-stone-600 rounded px-3 py-2 text-stone-200 text-sm" />
           <label class="flex items-center gap-2 text-sm text-stone-300">
             <input type="checkbox" bind:checked={shopHomebrew} class="accent-amber-600" />
-            Allow Homebrew
+            Homebrew
           </label>
           <button onclick={generateShop} disabled={shopGenerating} class="px-4 py-2 bg-amber-600 hover:bg-amber-700 disabled:bg-stone-600 disabled:text-stone-500 text-white rounded text-sm font-medium">
             {shopGenerating ? '⏳ Generating...' : '✨ Generate Shop'}
@@ -425,8 +451,8 @@
 
         <!-- Generated items for review -->
         {#if shopItems.length > 0}
-          <h3 class="text-amber-400 font-semibold mb-2">Review Generated Items</h3>
-          <div class="space-y-2 mb-4">
+          <h3 class="text-amber-400 font-semibold mb-2">Review Generated Items ({shopItems.length})</h3>
+          <div class="space-y-2 mb-3">
             {#each shopItems as item, i}
               <div class="bg-stone-800 border border-amber-900/50 rounded-lg p-4 flex items-start gap-4">
                 <div class="flex-1 min-w-0">
@@ -443,36 +469,62 @@
                     <p class="text-sm text-stone-400 mt-1">{item.description}</p>
                   {/if}
                 </div>
-                <div class="flex gap-1">
-                  <button onclick={() => approveShopItem(item)} class="px-3 py-1 text-xs bg-green-800 hover:bg-green-700 text-green-200 rounded">✓ Approve</button>
-                  <button onclick={() => shopItems = shopItems.filter((_, j) => j !== i)} class="px-3 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">✗ Reject</button>
-                </div>
+                <button onclick={() => shopItems = shopItems.filter((_, j) => j !== i)} class="px-3 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">✗</button>
               </div>
             {/each}
+          </div>
+          <div class="flex gap-2 items-center">
+            <button onclick={saveAllAsShop} disabled={!newShopName.trim() || shopSaving} class="px-4 py-2 bg-green-800 hover:bg-green-700 disabled:bg-stone-600 disabled:text-stone-500 text-white rounded text-sm font-medium">
+              {shopSaving ? '⏳ Saving...' : '💾 Save as Shop'}
+            </button>
+            <button onclick={() => { shopItems = []; newShopName = ''; }} class="px-4 py-2 bg-stone-700 hover:bg-stone-600 text-stone-300 rounded text-sm">Clear</button>
           </div>
         {/if}
       </div>
 
-      <!-- Existing shop items -->
-      <h3 class="text-stone-300 font-semibold mb-2">Saved Shop Items</h3>
-      {#if filteredShop.length === 0}
-        <p class="text-stone-500 text-sm">No shop items saved yet.</p>
+      <!-- Saved Shops (accordions) -->
+      {#if savedShops.length === 0}
+        <p class="text-stone-500 text-sm">No shops saved yet. Generate and save a shop above.</p>
       {:else}
-        <div class="space-y-2">
-          {#each filteredShop as item}
-            <div class="bg-stone-800 border border-stone-700 rounded-lg p-4 flex items-start gap-4">
-              <div class="flex-1">
-                <div class="flex items-center gap-2 flex-wrap">
-                  <span class="font-medium text-stone-200">{item.item_name}</span>
-                  <span class="text-xs px-2 py-0.5 rounded bg-stone-700 text-stone-300">{item.item_type}</span>
-                  <span class="text-xs {RARITY_COLORS[item.rarity] || 'text-stone-400'}">{item.rarity.replace('_', ' ')}</span>
-                  <span class="text-xs text-amber-500">{item.value_gp} gp</span>
+        <div class="space-y-3">
+          {#each savedShops as shop, si}
+            <div class="bg-stone-800 border border-stone-700 rounded-lg overflow-hidden">
+              <button onclick={() => expandedShop = expandedShop === si ? -1 : si} class="w-full flex items-center justify-between px-4 py-3 hover:bg-stone-750 transition-colors">
+                <div class="flex items-center gap-3">
+                  <span class="text-lg">🏪</span>
+                  <span class="font-semibold text-stone-200">{shop.name}</span>
+                  <span class="text-xs text-stone-400">({shop.items.length} items)</span>
                 </div>
-                {#if item.description}
-                  <p class="text-sm text-stone-400 mt-1">{item.description}</p>
-                {/if}
-              </div>
-              <button onclick={() => deleteEntry(item.id)} class="px-2 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">Delete</button>
+                <span class="text-stone-400">{expandedShop === si ? '▾' : '▸'}</span>
+              </button>
+              {#if expandedShop === si}
+                <div class="border-t border-stone-700 px-4 py-3">
+                  <div class="space-y-2">
+                    {#each shop.items as item}
+                      <div class="flex items-start gap-3 py-1">
+                        <div class="flex-1 min-w-0">
+                          <div class="flex items-center gap-2 flex-wrap">
+                            <span class="text-sm text-stone-200">{item.item_name}</span>
+                            <span class="text-xs px-2 py-0.5 rounded bg-stone-700 text-stone-300">{item.item_type}</span>
+                            <span class="text-xs {RARITY_COLORS[item.rarity] || 'text-stone-400'}">{item.rarity?.replace('_', ' ')}</span>
+                            {#if item.is_homebrew}
+                              <span class="text-xs px-2 py-0.5 rounded bg-purple-900 text-purple-300">Homebrew</span>
+                            {/if}
+                            <span class="text-xs text-amber-500">{item.value_gp} gp</span>
+                          </div>
+                          {#if item.description}
+                            <p class="text-xs text-stone-400 mt-0.5">{item.description}</p>
+                          {/if}
+                        </div>
+                        <button onclick={async () => { await deleteEntry(item.id); await refresh(); await loadSavedShops(); }} class="px-2 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">✗</button>
+                      </div>
+                    {/each}
+                  </div>
+                  <div class="mt-3 pt-2 border-t border-stone-700">
+                    <button onclick={() => deleteShop(shop.name)} class="px-3 py-1 text-xs bg-red-900 hover:bg-red-800 text-red-300 rounded">🗑️ Delete Shop</button>
+                  </div>
+                </div>
+              {/if}
             </div>
           {/each}
         </div>
