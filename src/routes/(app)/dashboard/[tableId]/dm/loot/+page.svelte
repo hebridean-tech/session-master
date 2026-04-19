@@ -204,6 +204,28 @@
     await loadSavedShops();
   }
 
+  let transferringId = $state<string | null>(null);
+  let transferTargetId = $state('');
+  let transferError = $state('');
+
+  async function transferItem(lootEntryId: string, characterSheetId: string, deductCost = false) {
+    transferringId = lootEntryId;
+    transferError = '';
+    try {
+      const res = await fetch('/api/loot/transfer', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lootEntryId, characterSheetId, deductCost, tableId }),
+      });
+      const data = await res.json();
+      if (data.error) { transferError = data.error; }
+      else {
+        await refresh();
+        await loadSavedShops();
+      }
+    } catch (e: any) { transferError = e.message; }
+    transferringId = null;
+  }
+
   async function sendChat() {
     if (!chatInput.trim() || chatLoading) return;
     const msg = chatInput.trim();
@@ -244,6 +266,12 @@
 
   <!-- Content area -->
   <div class="flex-1 overflow-y-auto p-6">
+    {#if transferError}
+      <div class="mb-4 px-4 py-2 bg-red-900/50 border border-red-800 rounded text-red-300 text-sm flex items-center justify-between">
+        {transferError}
+        <button onclick={() => transferError = ''} class="text-red-400 hover:text-red-200">✕</button>
+      </div>
+    {/if}
     {#if activeTab === 'loot'}
       <!-- Loot Tab -->
       <div class="flex flex-wrap gap-3 mb-4 items-center">
@@ -427,6 +455,16 @@
               </div>
               <div class="flex gap-1">
                 <button onclick={() => editEntry(item)} class="px-2 py-1 text-xs bg-stone-700 hover:bg-stone-600 text-stone-300 rounded">Edit</button>
+                <select class="text-xs bg-green-900 text-green-200 rounded px-1 py-1 border-0" disabled={transferringId === item.id}>
+                  <option value="">→ Party</option>
+                  {#each characters as row}
+                    <option value={row.sheet.id}>{row.sheet.characterName}</option>
+                  {/each}
+                </select>
+                <button onclick={(e) => {
+                  const sel = (e.target as HTMLElement).previousElementSibling as HTMLSelectElement;
+                  if (sel?.value) transferItem(item.id, sel.value);
+                }} disabled={transferringId === item.id} class="px-2 py-1 text-xs bg-green-800 hover:bg-green-700 text-green-200 rounded">Give</button>
                 <button onclick={() => deleteEntry(item.id)} class="px-2 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">Delete</button>
               </div>
             </div>
@@ -517,6 +555,16 @@
                           {/if}
                         </div>
                         <button onclick={async () => { await deleteEntry(item.id); await refresh(); await loadSavedShops(); }} class="px-2 py-1 text-xs bg-red-900/50 hover:bg-red-800 text-red-300 rounded">✗</button>
+                        <select class="text-xs bg-amber-900 text-amber-200 rounded px-1 py-1 border-0" disabled={transferringId === item.id}>
+                          <option value="">Buy for</option>
+                          {#each characters as row}
+                            <option value={row.sheet.id}>{row.sheet.characterName}</option>
+                          {/each}
+                        </select>
+                        <button onclick={(e) => {
+                          const sel = (e.target as HTMLElement).previousElementSibling as HTMLSelectElement;
+                          if (sel?.value) transferItem(item.id, sel.value, true);
+                        }} disabled={transferringId === item.id} class="px-2 py-1 text-xs bg-amber-800 hover:bg-amber-700 text-amber-200 rounded">Buy</button>
                       </div>
                     {/each}
                   </div>
