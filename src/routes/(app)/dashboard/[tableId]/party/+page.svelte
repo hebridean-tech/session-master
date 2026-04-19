@@ -110,15 +110,11 @@
                         {/if}
                       {/each}
                     </select>
-                    <button onclick={() => {
-                      const sel = document.getElementById('transfer-{sheet.id}') as HTMLSelectElement;
-                      if (sel?.value) transferCharacter(sheet.id, sel.value);
-                      else transferringId = null;
-                    }} class="text-xs text-green-400 hover:text-green-300">✓</button>
-                    <button onclick={() => transferringId = null} class="text-xs text-stone-500 hover:text-stone-300">✕</button>
+                    <button onclick={(e) => { e.stopPropagation(); const sel = document.getElementById('transfer-{sheet.id}') as HTMLSelectElement; if (sel?.value) transferCharacter(sheet.id, sel.value); else transferringId = null; }} class="text-xs text-green-400 hover:text-green-300">✓</button>
+                    <button onclick={(e) => { e.stopPropagation(); transferringId = null; }} class="text-xs text-stone-500 hover:text-stone-300">✕</button>
                   </div>
                 {:else if isDm}
-                  <button onclick={() => transferringId = sheet.id} class="text-xs text-stone-500 hover:text-amber-400" title="Transfer character">🔄</button>
+                  <button onclick={(e) => { e.stopPropagation(); transferringId = sheet.id; }} class="text-xs text-stone-500 hover:text-amber-400" title="Transfer character">🔄</button>
                 {/if}
                 <span class="text-stone-600 text-sm">→</span>
               </div>
